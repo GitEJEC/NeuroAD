@@ -23,6 +23,7 @@ Sistema de seguimiento y apoyo para **pacientes con TDAH** y sus **terapeutas**.
 - Datos ficticios únicamente (seed). Nunca datos reales de pacientes.
 
 Entorno del desarrollador: **Windows**, repo local en `C:\dev\NeuroAD`, remoto en `https://github.com/GitEJEC/NeuroAD`. Usa comandos compatibles con PowerShell.
+IP LAN del PC de desarrollo para las pruebas con el teléfono: **`192.168.100.1`** → `EXPO_PUBLIC_API_URL=http://192.168.100.1:8000`.
 
 ---
 
@@ -338,7 +339,7 @@ Reglas:
 |---|---|---|
 | 1 | Fundaciones + esqueleto backend | ✅ |
 | 2 | API completa + tests | ✅ |
-| 3 | Web: base, login, pacientes | ⬜ |
+| 3 | Web: base, login, pacientes | ✅ |
 | 4 | Web: dashboard emociones + KPIs | ⬜ |
 | 5 | Web: tareas, micropasos, consejos | ⬜ |
 | 6 | App: base, diseño, parálisis, Qué hacer | ⬜ |

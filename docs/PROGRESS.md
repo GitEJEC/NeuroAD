@@ -49,6 +49,32 @@ Verificado: `pytest` 8 passed. Con uvicorn real: `/openapi.json` lista las 22 ru
 **Pendientes**
 - Fase 3: web del terapeuta (login, pacientes, campana).
 
+### 2026-11-22 — Fase 3: Web base, login y pacientes
+**Qué se hizo**
+- `web/` con Vite 8 + React 19 + TypeScript (estricto), Mantine 9 (core, hooks, notifications), react-router-dom 7, fuente Lexend (Google Fonts).
+- `src/api/client.ts`: `api()` con `VITE_API_URL`, token en `localStorage`, 401 con sesión → borra token y vuelve a `/login`; tipos y `formatDateTime` (hora de Santiago).
+- `src/auth/AuthContext.tsx`: sesión (`login`, `logout`, `/auth/me` al recargar) y `RequireAuth`.
+- Páginas: `Login`, `Patients` (tabla: nombre, última parálisis, badge "N sin ver"), `PatientDetail` (pestañas vacías Resumen · Tareas · Consejos).
+- `components/AppLayout` (encabezado: NeuroAD, nombre del terapeuta, campana, Salir) y `components/NotificationBell`
+  (polling 15 s a `/notifications`, contador, toast con paciente/fecha/descripción en reportes nuevos, clic → marca visto y abre el paciente).
+- `PLAN.md`: IP LAN del PC de desarrollo (`192.168.100.1`) para las pruebas con el teléfono.
+
+**Cómo probarlo**
+```powershell
+# backend/: python seed.py; uvicorn app.main:app --reload
+# web/:
+copy .env.example .env
+npm install
+npm run dev     # http://localhost:5173 → terapeuta@neuroad.cl / demo1234
+```
+Verificado: `npm run build` y `npm run lint` sin errores ni warnings. Con backend + Vite corriendo: la página sirve,
+CORS permite `http://localhost:5173`, login → `/patients` (2 pacientes, Matías con 2 sin ver) y `/notifications` (2 reportes);
+token inválido → 401; contraseña mala → 401 "Correo o contraseña incorrectos".
+No verificado en navegador (sin herramienta de navegador en la sesión): recorrido visual login → lista → detalle → campana. Hacerlo a mano.
+
+**Pendientes**
+- Fase 4: pestaña Resumen (gráfico, leyenda, KPIs, ParalysisFeed).
+
 ## Decisiones
 - `seed.py` hashea con `bcrypt` directamente. En Fase 2, `security.py` usará el mismo bcrypt, así que los hashes son compatibles.
 - `seed.py` recrea la BD con `drop_all` + `create_all` en vez de borrar el archivo. Así no hay que interpretar `DB_URL`, y se evita un archivo bloqueado en Windows si uvicorn está corriendo.
@@ -66,6 +92,14 @@ Verificado: `pytest` 8 passed. Con uvicorn real: `/openapi.json` lista las 22 ru
 - (Fase 2) Recurso ajeno (paciente de otro terapeuta, dato de otro paciente) responde 404; rol equivocado responde 403.
 - (Fase 2) Los consejos por defecto se copian solo en `seed.py`: no hay endpoint para crear pacientes.
 - (Fase 2) `GET /patients` hace una consulta por paciente: basta para pocos pacientes.
+- (Fase 3) Librerías nuevas: las que pide el plan (`@mantine/core`, `@mantine/hooks`, `@mantine/notifications`, `react-router-dom`) más lo que trae la plantilla Vite (`oxlint` como linter). Recharts se instala en Fase 4.
+- (Fase 3) Sin `postcss-preset-mantine`: no escribimos CSS con mixins de Mantine. Fechas con `Intl.DateTimeFormat` (sin dayjs).
+- (Fase 3) Clic en una notificación marca ese reporte como visto. Abrir el paciente todavía no marca nada: eso lo hará la pestaña Resumen (ParalysisFeed) en Fase 4.
+- (Fase 3) La primera consulta de la campana solo fija la base (sin toast); los toasts salen para reportes que aparecen después.
+- (Fase 3) 401 con sesión activa → `window.location.assign('/login')`, sin bus de eventos.
+- (Fase 3) Un paciente que intenta entrar a la web ve "Esta web es solo para terapeutas." (no se guarda su token).
+- (Fase 3) La campana usa el emoji 🔔 (con `aria-label`) en vez de agregar una librería de íconos.
+- (Fase 3) Se borró `web/README.md` de una línea para que `create-vite` creara el proyecto; quedó uno nuevo que remite al README raíz.
 
 ## Pendientes
 - Fases 3 a 8 según `PLAN.md`.

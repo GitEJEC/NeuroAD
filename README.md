@@ -30,5 +30,16 @@ uvicorn app.main:app --reload
 | Paciente | paciente1@neuroad.cl | demo1234 |
 | Paciente | paciente2@neuroad.cl | demo1234 |
 
-## Web y app
-Se agregan en las fases 3 (web) y 6 (app).
+## Web (terapeuta)
+Con el backend corriendo, en PowerShell desde la carpeta `web/`:
+
+```powershell
+copy .env.example .env
+npm install
+npm run dev
+```
+
+- Abre http://localhost:5173 e inicia sesión con la cuenta de terapeuta.
+
+## App
+Se agrega en la fase 6.
