@@ -41,5 +41,27 @@ npm run dev
 
 - Abre http://localhost:5173 e inicia sesión con la cuenta de terapeuta.
 
-## App
-Se agrega en la fase 6.
+## App (paciente)
+Se usa **Expo Go** en un teléfono Android. Puedes instalarlo desde Play Store, o dejar que `expo start --android` lo instale por USB.
+
+**Opción A: Wi-Fi.** El teléfono debe estar en la misma red que el PC.
+```powershell
+# backend/: el backend escucha en la red
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+# mobile/:
+copy .env.example .env      # EXPO_PUBLIC_API_URL=http://<IP-LAN-del-PC>:8000
+npm install
+npx expo start              # escanea el QR con Expo Go
+```
+El firewall de Windows debe permitir los puertos 8000 y 8081 en la red privada.
+
+**Opción B: cable USB.** No depende del firewall. Requiere `adb` y la depuración USB activada.
+```powershell
+adb reverse tcp:8000 tcp:8000
+adb reverse tcp:8081 tcp:8081
+# mobile/:
+$env:EXPO_PUBLIC_API_URL='http://localhost:8000'
+npx expo start --android --localhost
+```
+
+Luego inicia sesión con `paciente1@neuroad.cl` / `demo1234`. En la terminal de Expo, `r` recarga la app.
