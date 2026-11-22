@@ -254,6 +254,61 @@ No verificado por Claude:
 **Pendientes**
 - Fase 8: integración, revisión de UX y cierre.
 
+### 2026-11-22 — Fase 8: Integración, revisión de UX y cierre
+**Qué se hizo**
+- Guion de demo completo (PLAN, Fase 8) recorrido de punta a punta, sin fallos que corregir:
+  web en Chromium (Playwright) y app en el Motorola edge 60 fusion (Expo Go por USB), manejada por Claude con `adb` y capturas.
+- Revisión de la app contra las 11 reglas de §6: tabla "cumple / ajustado" en `docs/UX_BAJA_FRICCION.md`. Dos ajustes:
+  - Regla 10: si el sistema pide reducir movimiento, la escala de animación de Paper pasa a 0 (panel y snackbars sin transición). `app/_layout.tsx`.
+  - Regla 2: las pestañas tienen `tabBarAccessibilityLabel`. Antes, el lector de pantalla leía el glifo del ícono junto al nombre.
+- Limpieza: sin `console.log`, TODOs ni código muerto (solo `OFFLINE_MESSAGE` dejó de exportarse, no se usaba fuera).
+  Sin secretos en git: `.env` y `*.db` están ignorados y nunca se commitearon; el `SECRET_KEY` de `config.py` es solo un valor por defecto de desarrollo.
+- `README.md` final: requisitos, clonar, levantar backend / web / app (Wi-Fi o USB), credenciales, guion de demo y problemas comunes.
+- `docs/UX_BAJA_FRICCION.md`: textos tipo de Tareas y Emociones, y se quitaron notas ya obsoletas ("se hará en la Fase 7/8").
+
+**Cómo probarlo**
+Seguir el README desde un clon limpio y luego el "Guion de demo".
+
+**Verificado**
+- `pytest` 9 passed; web `npm run build` y `npm run lint` sin errores; app `npx tsc --noEmit` sin errores.
+- Clon limpio en una carpeta temporal siguiendo el README: `venv` + `pip install` + `seed.py` + `pytest` (9 passed), `npm install` + `npm run build` en web, `npm install` + `tsc` en mobile.
+- Guion de demo (tras `python seed.py`):
+  1. Web: login del terapeuta y detalle de Matías.
+  2. App: salir y volver a entrar como paciente1. Tres emociones (Calma, Ansiedad, Alegría): el conteo del día en `/kpis` pasa de 1 a 4.
+     "Hacer la cama" → Me sirvió 👍: la API da `like` y `tasks_liked` 1.
+  3. Parálisis con descripción → la app abre Qué hacer con "Listo, tu terapeuta ya fue avisado.".
+  4. Web: el toast "Parálisis: Matías Soto · … · No puedo empezar la tarea de matematicas" llegó 13 s después de Enviar.
+     Resumen con Día: 2 parálisis, última 7:40 p. m., 4 emociones, más frecuente Calma, 👍 1 · 👎 0; gráfico y leyenda con Calma 2, Alegría 1, Ansiedad 1.
+  5. Web: paso 1 de "Hacer la cama" y título del primer consejo editados → al abrir Qué hacer y Tareas en la app se ven los textos nuevos. El 👍 se mantiene tras editar la tarea.
+- Con "Quitar animaciones" activado en Android (`transition_animation_scale 0`) el panel de parálisis abre y cierra bien; el ajuste se devolvió a 1.
+
+**No verificado por Claude**
+- Que las transiciones desaparezcan de verdad con reducir movimiento: una captura no muestra animaciones. Se confirmó que no rompe nada.
+- La lectura en voz alta de TalkBack: se comprobó con `uiautomator` que la etiqueta de cada pestaña ahora es solo su nombre.
+- La prueba por Wi-Fi en esta sesión (se usó USB); ya se verificó en la Fase 6.
+- En la BD quedaron los registros de la demo. `python seed.py` los borra.
+
+## Resumen final del prototipo
+- **Backend:** FastAPI + SQLite con 22 rutas (auth, paciente, terapeuta), JWT de 7 días, rangos en hora de Santiago, 9 tests.
+- **Web del terapeuta:** login, lista de pacientes, campana con polling de 15 s y toast, registro de parálisis con reporte destacado,
+  dashboard Día/Semana/Mes (KPIs, Barras/Torta, leyenda), edición de tareas con micropasos y de consejos.
+- **App del paciente:** login con sesión guardada, botón de parálisis con panel opcional, Tareas en acordeón con 👍/👎,
+  Emociones con Enviar y Deshacer, Qué hacer con consejos. Sigue la guía de baja fricción (§6), revisada en la Fase 8.
+- Probado de punta a punta en un teléfono Android real y en Chromium.
+
+## Ideas para después del prototipo
+No se implementan; quedan como referencia.
+- Notificaciones push reales (Expo Notifications) en lugar de polling, para el terapeuta y recordatorios para el paciente.
+- Alta y administración de pacientes y terapeutas desde la web (hoy solo existen los del seed).
+- Cambio y recuperación de contraseña; expiración de sesión más corta con refresh token.
+- "Último registro" de emociones guardado en el backend (hoy vive en la memoria de la pestaña).
+- Modo sin conexión con cola local para reportes y emociones.
+- Notas del terapeuta por paciente y exportar el historial (CSV o PDF).
+- Tendencias en el tiempo (emociones por semana, parálisis por hora del día).
+- Reordenar tareas y programarlas por día.
+- Pruebas automatizadas de la web y la app (Playwright, Maestro) en CI.
+- Base de datos gestionada (PostgreSQL), HTTPS y despliegue, con revisión de privacidad para datos de salud reales.
+
 ## Decisiones
 - `seed.py` hashea con `bcrypt` directamente. En Fase 2, `security.py` usará el mismo bcrypt, así que los hashes son compatibles.
 - `seed.py` recrea la BD con `drop_all` + `create_all` en vez de borrar el archivo. Así no hay que interpretar `DB_URL`, y se evita un archivo bloqueado en Windows si uvicorn está corriendo.
@@ -322,6 +377,11 @@ No verificado por Claude:
 - (Ajuste Fase 7) Enviar va fijo abajo, fuera del `ScrollView`: con 10 celdas no cabía en pantalla y quedaba tapado por las pestañas.
 - (Ajuste Fase 7) El borde de la celda mide siempre 3 px y es transparente cuando no está elegida. Así, elegir una emoción no mueve la grilla.
 
+- (Fase 8) El guion de demo se recorrió con Playwright (instalado solo en una carpeta temporal, no es dependencia del repo) y con el teléfono por USB.
+- (Fase 8) "Reducir movimiento" se lee con `AccessibilityInfo` de React Native y se aplica con `theme.animation.scale = 0` de Paper. Sin librerías nuevas.
+- (Fase 8) Sin capturas de pantalla en `docs/` (el plan las deja como opcionales); el README describe cada paso del guion.
+- (Fase 8) El README usa `uvicorn --host 0.0.0.0 --port 8000` como comando principal, porque la demo necesita que el teléfono llegue al backend.
+
 ## Pendientes
-- Fase 8 según `PLAN.md`.
-- Firewall de Windows: permitir los puertos 8000 y 8081 para probar la app por Wi-Fi (comando en el README, Opción A).
+- Ninguno del plan: las 8 fases están completas. Ver "Ideas para después del prototipo".
+- Para usar la app por Wi-Fi en otro PC: crear la regla del firewall (README, Opción A).
