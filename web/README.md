@@ -1,1 +1,1 @@
-Web del terapeuta (React + Vite + Mantine). Se crea en la Fase 3.
+Web del terapeuta (React + Vite + Mantine). Instrucciones en el README de la raíz.
