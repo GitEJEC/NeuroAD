@@ -10,9 +10,11 @@ type Props = {
   mode?: 'contained' | 'outlined' | 'text';
   // Tall = the main action of the screen (paralysis button: ≥ 120 dp).
   tall?: boolean;
+  // For toggle buttons (task feedback): announced to screen readers.
+  selected?: boolean;
 };
 
-export function BigButton({ label, onPress, icon, loading, mode = 'contained', tall }: Props) {
+export function BigButton({ label, onPress, icon, loading, mode = 'contained', tall, selected }: Props) {
   return (
     <Button
       mode={mode}
@@ -21,6 +23,7 @@ export function BigButton({ label, onPress, icon, loading, mode = 'contained', t
       loading={loading}
       disabled={loading}
       accessibilityLabel={label}
+      accessibilityState={selected === undefined ? undefined : { selected }}
       style={styles.button}
       contentStyle={{ minHeight: tall ? PARALYSIS_HEIGHT : MIN_TOUCH + 8 }}
       labelStyle={tall ? styles.tallLabel : undefined}

@@ -21,6 +21,19 @@ export type Tip = {
   position: number;
 };
 
+export type Feedback = 'like' | 'dislike' | null;
+
+export type Task = {
+  id: number;
+  title: string;
+  position: number;
+  feedback: Feedback;
+  feedback_at: string | null;
+  steps: string[];
+};
+
+export type Emotion = { key: string; label: string; emoji: string; color: string };
+
 export type IdOut = { id: number };
 
 export class ApiError extends Error {

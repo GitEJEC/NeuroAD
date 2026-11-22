@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import { vibrate } from '../../src/haptics';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -23,7 +23,7 @@ export default function Home() {
   const firstName = user?.full_name.split(' ')[0] ?? '';
 
   function openPanel() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    vibrate();
     setOpen(true);
   }
 
@@ -45,7 +45,7 @@ export default function Home() {
       if (text) {
         await api(`/me/paralysis/${id}`, { method: 'PATCH', body: JSON.stringify({ description: text }) });
       }
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      vibrate();
       close();
       setSent(true);
       router.navigate('/que-hacer');

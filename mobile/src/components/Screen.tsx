@@ -1,11 +1,18 @@
-import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import type { ReactElement, ReactNode } from 'react';
+import { ScrollView, StyleSheet, type RefreshControlProps } from 'react-native';
 import { colors, spacing } from '../theme';
 
+type Props = { children: ReactNode; refreshControl?: ReactElement<RefreshControlProps> };
+
 // Shared scrollable page body (keeps padding and background in one place).
-export function Screen({ children }: { children: ReactNode }) {
+export function Screen({ children, refreshControl }: Props) {
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      refreshControl={refreshControl}
+    >
       {children}
     </ScrollView>
   );

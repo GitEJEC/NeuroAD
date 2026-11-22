@@ -6,7 +6,7 @@ Base: PLAN.md §6. Aquí están los valores concretos que usa el código (`mobil
 ## Herramientas
 - **React Native Paper** (Material 3): botones, tarjetas, campos y modal accesibles.
 - **Lexend** (`@expo-google-fonts/lexend`): pesos 400 (texto), 600 (botones, títulos de tarjeta) y 700 (títulos).
-- **expo-haptics**: `notificationAsync(Success)` al registrar una parálisis y al enviar su descripción.
+- **Vibración** (`src/haptics.ts` → `vibrate()`): expo-haptics `notificationAsync(Success)`; si el módulo nativo no está (Expo Go 58 en Android), `Vibration` de React Native. Se usa al abrir el panel y al enviar una parálisis, al dar feedback a una tarea, al registrar una emoción y al deshacerla.
 - **@expo/vector-icons** (MaterialCommunityIcons): siempre junto a un texto.
 
 ## Colores
