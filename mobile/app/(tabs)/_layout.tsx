@@ -23,10 +23,10 @@ export default function TabsLayout() {
         sceneStyle: { backgroundColor: colors.background },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Inicio', tabBarIcon: icon('home-outline') }} />
-      <Tabs.Screen name="tareas" options={{ title: 'Tareas', tabBarIcon: icon('format-list-checks') }} />
-      <Tabs.Screen name="emociones" options={{ title: 'Emociones', tabBarIcon: icon('emoticon-outline') }} />
-      <Tabs.Screen name="que-hacer" options={{ title: 'Qué hacer', tabBarIcon: icon('lightbulb-on-outline') }} />
+      <Tabs.Screen name="index" options={{ title: 'Inicio', tabBarAccessibilityLabel: 'Inicio', tabBarIcon: icon('home-outline') }} />
+      <Tabs.Screen name="tareas" options={{ title: 'Tareas', tabBarAccessibilityLabel: 'Tareas', tabBarIcon: icon('format-list-checks') }} />
+      <Tabs.Screen name="emociones" options={{ title: 'Emociones', tabBarAccessibilityLabel: 'Emociones', tabBarIcon: icon('emoticon-outline') }} />
+      <Tabs.Screen name="que-hacer" options={{ title: 'Qué hacer', tabBarAccessibilityLabel: 'Qué hacer', tabBarIcon: icon('lightbulb-on-outline') }} />
     </Tabs>
   );
 }

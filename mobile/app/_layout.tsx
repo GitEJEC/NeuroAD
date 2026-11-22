@@ -1,16 +1,27 @@
 import { Lexend_400Regular, Lexend_600SemiBold, Lexend_700Bold, useFonts } from '@expo-google-fonts/lexend';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { AccessibilityInfo, ActivityIndicator, StyleSheet, View } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { SessionProvider, useSession } from '../src/api/session';
 import { colors, theme } from '../src/theme';
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({ Lexend_400Regular, Lexend_600SemiBold, Lexend_700Bold });
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
+    return () => sub.remove();
+  }, []);
+
+  // Paper scales Modal and Snackbar animations by theme.animation.scale; 0 makes them instant.
+  const paperTheme = reduceMotion ? { ...theme, animation: { ...theme.animation, scale: 0 } } : theme;
 
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={paperTheme}>
       <StatusBar style="dark" />
       <SessionProvider>{fontsLoaded || fontError ? <RootStack /> : <Loading />}</SessionProvider>
     </PaperProvider>

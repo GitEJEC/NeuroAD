@@ -44,7 +44,7 @@ export class ApiError extends Error {
   }
 }
 
-export const OFFLINE_MESSAGE = 'No hay conexión. Lo intentaremos de nuevo.';
+const OFFLINE_MESSAGE = 'No hay conexión. Lo intentaremos de nuevo.';
 export const errorMessage = (e: unknown) =>
   e instanceof ApiError ? e.message : 'Ocurrió un error. Intenta de nuevo.';
 
