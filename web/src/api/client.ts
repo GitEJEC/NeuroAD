@@ -33,6 +33,29 @@ export type Paralysis = {
   seen_by_therapist: boolean;
 };
 
+export type Emotion = {
+  key: string;
+  label: string;
+  emoji: string;
+  color: string;
+};
+
+export type EmotionCount = {
+  emotion_key: string;
+  count: number;
+};
+
+export type Kpis = {
+  paralysis_count: number;
+  last_paralysis_at: string | null;
+  emotion_count: number;
+  top_emotion: string | null;
+  tasks_liked: number;
+  tasks_disliked: number;
+};
+
+export type Range = 'day' | 'week' | 'month';
+
 // Fired after marking reports as seen, so the bell refreshes without waiting for the next poll.
 export const NOTIFICATIONS_CHANGED = 'neuroad:notifications';
 
