@@ -199,6 +199,48 @@ No verificado por Claude:
 - Para usar Wi-Fi, permitir los puertos 8000 y 8081 en el firewall de Windows (red privada). Hace falta un administrador; el comando está en el README.
 - Fase 7: Tareas y Emociones en la app.
 
+### 2026-11-22 — Fase 7: Tareas y Bitácora de emociones (app)
+**Qué se hizo**
+- **Tareas** (`app/(tabs)/tareas.tsx`): `TaskCard` en acordeón (solo una abierta a la vez). Al abrirla se ve `MicroStepList`:
+  pasos numerados con un checkbox por paso, solo en memoria. Al final están los botones grandes "Me sirvió 👍" y
+  "No me sirvió 👎". El botón elegido queda relleno, con ✓ y `accessibilityState.selected`. Si se toca otra vez, se quita la selección (`null`).
+  La lista se actualiza al deslizar hacia abajo (pull-to-refresh) y cada vez que se abre la pestaña.
+  Si no hay tareas, se muestra un estado vacío; si hay un error, se muestra Reintentar.
+- **Emociones** (`app/(tabs)/emociones.tsx` + `EmotionGrid`): "¿Cómo te sientes ahora?" y una grilla de 2 columnas
+  (emoji + nombre) con el catálogo de `GET /emotions`. Un toque hace `POST`, vibra y muestra la snackbar
+  "Guardado: X" con **Deshacer** durante 5 s (`DELETE`). Debajo aparece "Último registro: X, HH:MM".
+- `src/haptics.ts` (`vibrate()`): usa expo-haptics y, si falla, `Vibration` de React Native. También se usa en Inicio.
+- `Screen` acepta `refreshControl`; `BigButton` acepta `selected`. Tipos `Task`, `Feedback` y `Emotion` en `api/client.ts`.
+- Sin cambios en el backend.
+
+**Cómo probarlo**
+```powershell
+# backend/: python seed.py; uvicorn app.main:app --host 0.0.0.0 --port 8000
+# mobile/:  npx expo start   (o por USB: ver Fase 6)
+# web/:     npm run dev → Matías → Tareas (feedback) y Resumen con filtro Día (emociones)
+```
+Verificado: `npx tsc --noEmit` sin errores, `npx expo export --platform android` OK y `pytest` 9 passed.
+Recorrido en el Motorola edge 60 fusion (Expo Go por USB), manejado por Claude con `adb` y capturas:
+- Tareas: las 3 tareas cerradas. Abrir "Mochila" cierra "Hacer la cama". El checkbox marca el paso y lo atenúa.
+- 👍 en "Hacer la cama" → `GET /patients/2/tasks` del terapeuta (lo que lee la web) da `like`. 👎 da `dislike`, y tocar de nuevo el seleccionado da `null`.
+- Emociones: la grilla muestra 10 botones y "Último registro" cabe sin desplazar. Calma pasa de 1 a 2 en
+  `GET /patients/2/emotions/summary?range=day` (lo que lee el gráfico de la web con filtro Día). Al deshacer Alegría,
+  baja de 2 a 1 y "Último registro" vuelve al anterior.
+- Bug encontrado y corregido: el Expo Go 58 del teléfono no trae el módulo nativo `ExpoHaptics`, así que cada
+  `Haptics.*Async` (también en Inicio, desde la Fase 6) dejaba un "Uncaught (in promise)". Ahora se usa `vibrate()` con respaldo.
+- Bug corregido: el texto de la snackbar con dos hijos (`Guardado: {x}`) no se mostraba; ahora es un solo string.
+
+No verificado por Claude:
+- La vista de la web en el navegador: se comprobaron los endpoints que lee la web.
+- Que el teléfono vibre de verdad (no se puede ver en una captura).
+- El error sin backend en Tareas y Emociones: el backend en el puerto 8000 era un proceso ya abierto y no se cerró.
+  El componente `ErrorMessage` es el mismo que ya se probó en la Fase 6.
+- El spinner de pull-to-refresh no salió en la captura.
+- En la BD quedaron registros de prueba de hoy (calma, ansiedad, frustración y alegría, y "Hacer la cama" con 👍). `python seed.py` los borra.
+
+**Pendientes**
+- Fase 8: integración, revisión de UX y cierre.
+
 ## Decisiones
 - `seed.py` hashea con `bcrypt` directamente. En Fase 2, `security.py` usará el mismo bcrypt, así que los hashes son compatibles.
 - `seed.py` recrea la BD con `drop_all` + `create_all` en vez de borrar el archivo. Así no hay que interpretar `DB_URL`, y se evita un archivo bloqueado en Windows si uvicorn está corriendo.
@@ -255,6 +297,14 @@ No verificado por Claude:
 - (Fase 6) Sin ESLint en mobile; el chequeo es `tsc --noEmit` en modo estricto.
 - (Fase 6) Prueba en el teléfono por USB con `adb reverse` (8000 y 8081) y `EXPO_PUBLIC_API_URL=http://localhost:8000`, porque el firewall de Windows bloquea la LAN. El `.env.example` mantiene la IP LAN del plan.
 
+- (Fase 7) "Último registro" vive en la memoria de la pestaña porque ningún endpoint lo devuelve. Aparece después del primer registro de la sesión y se pierde al cerrar la app. No se agregó un endpoint.
+- (Fase 7) La hora HH:MM es la hora local del teléfono (en Chile coincide con Santiago). Así no dependemos de que Hermes soporte `Intl` con `timeZone`.
+- (Fase 7) Los pasos marcados se guardan por índice en el estado de `TaskCard`, así que sobreviven a cerrar y abrir la tarjeta. No se guardan en el backend (§6, regla 11).
+- (Fase 7) Las tareas también se recargan al abrir la pestaña, igual que Qué hacer. Así se ven las ediciones del terapeuta sin deslizar.
+- (Fase 7) El feedback no es optimista: la tarjeta se actualiza con la respuesta del `PUT`. Si falla, aparece `ErrorMessage` dentro de la tarjeta y Reintentar repite el toque.
+- (Fase 7) Vibración: `vibrate()` intenta expo-haptics y, si no está, usa `Vibration.vibrate(40)` de React Native. No se agregó ninguna librería. Se usa `notificationAsync(Success)` en todos los casos: el plan pide solo una "vibración corta".
+- (Fase 7) Las celdas de la grilla de emociones tienen 96 dp de alto mínimo y un emoji de 36. Así entran las 10 emociones y "Último registro" sin desplazar en el Motorola.
+
 ## Pendientes
-- Fases 7 y 8 según `PLAN.md`.
+- Fase 8 según `PLAN.md`.
 - Firewall de Windows: permitir los puertos 8000 y 8081 para probar la app por Wi-Fi (comando en el README, Opción A).

@@ -345,7 +345,7 @@ Reglas:
 | 4 | Web: dashboard emociones + KPIs | ✅ |
 | 5 | Web: tareas, micropasos, consejos | ✅ |
 | 6 | App: base, diseño, parálisis, Qué hacer | ✅ |
-| 7 | App: tareas y emociones | ⬜ |
+| 7 | App: tareas y emociones | ✅ |
 | 8 | Integración, UX, cierre | ⬜ |
 
 (Cambia ⬜ por ✅ al completar la fase.)
