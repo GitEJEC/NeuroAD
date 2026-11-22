@@ -2,12 +2,12 @@
 import random
 from datetime import datetime, timedelta, timezone
 
-import bcrypt
 from sqlmodel import Session, SQLModel
 
-from app.db import create_db, engine
+from app.db import engine
 from app.emotions import EMOTION_KEYS
 from app.models import EmotionLog, MicroStep, ParalysisReport, Task, Tip, User
+from app.security import hash_password
 
 DEMO_PASSWORD = "demo1234"
 
@@ -87,18 +87,14 @@ PARALYSIS = [
 ]
 
 
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-
-
-def seed() -> None:
+def seed(eng=engine) -> None:
     random.seed(42)  # reproducible demo data
-    SQLModel.metadata.drop_all(engine)
-    create_db()
+    SQLModel.metadata.drop_all(eng)
+    SQLModel.metadata.create_all(eng)
     now = datetime.now(timezone.utc)
     pw = hash_password(DEMO_PASSWORD)
 
-    with Session(engine) as s:
+    with Session(eng) as s:
         therapist = User(email="terapeuta@neuroad.cl", password_hash=pw,
                          full_name="Camila Rojas", role="therapist")
         s.add(therapist)
