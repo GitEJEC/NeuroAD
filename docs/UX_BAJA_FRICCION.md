@@ -43,7 +43,7 @@ Los tamaños son `sp`: respetan el tamaño de letra del sistema.
 - Tras el toque: "Listo, tu terapeuta ya fue avisado." · campo "¿Qué pasó? (opcional)" · botones **Enviar** y **Saltar**.
 - Qué hacer: "Prueba una de estas ideas. Elige la que te parezca más fácil."
 - Error: "No hay conexión. Lo intentaremos de nuevo." + botón **Reintentar**.
-- Vacíos: "Aún no tienes tareas. Tu terapeuta las agregará pronto." · "Aún no tienes consejos. Tu terapeuta los agregará pronto."
+- Vacíos: "Aún no tienes consejos. Tu terapeuta los agregará pronto." (en la Fase 7, Tareas usará "Aún no tienes tareas. Tu terapeuta las agregará pronto." cuando la lista esté vacía).
 
 ## Las 11 reglas y cómo se aplican (Fase 6)
 1. **Una acción principal por pantalla:** Inicio = botón de parálisis, grande y arriba. "Salir" va abajo, como texto discreto.
