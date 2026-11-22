@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import CORS_ORIGINS
 from app.db import create_db
+from app.emotions import EMOTIONS
+from app.routers import auth, patient, therapist
 
 
 @asynccontextmanager
@@ -24,6 +26,16 @@ app.add_middleware(
 )
 
 
+app.include_router(auth.router)
+app.include_router(patient.router)
+app.include_router(therapist.router)
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/emotions", tags=["catálogo"])
+def emotions():
+    return EMOTIONS
