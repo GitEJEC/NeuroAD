@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from sqlmodel import select
 
-from app.models import EmotionLog, User, utcnow
+from app.models import EmotionLog, ParalysisReport, User, utcnow
 from app.security import hash_password
 
 THERAPIST = "terapeuta@neuroad.cl"
@@ -64,6 +64,19 @@ def test_paralysis_flow(client, auth):
 
     assert client.patch(f"/paralysis/{rid}/seen", headers=ht).json()["seen_by_therapist"] is True
     assert rid not in [n["id"] for n in client.get("/notifications", headers=ht).json()]
+
+
+def test_paralysis_log_without_range_is_full_history(client, auth, session):
+    p1 = user_id(session, P1)
+    old = ParalysisReport(patient_id=p1, pressed_at=utcnow() - timedelta(days=40))
+    session.add(old)
+    session.commit()
+    ht = auth(THERAPIST)
+
+    all_ids = [r["id"] for r in client.get(f"/patients/{p1}/paralysis", headers=ht).json()]
+    month_ids = [r["id"] for r in client.get(f"/patients/{p1}/paralysis?range=month", headers=ht).json()]
+    assert old.id in all_ids and old.id not in month_ids
+    assert len(all_ids) == len(month_ids) + 1
 
 
 def test_emotion_summary_by_range(client, auth, session):

@@ -118,8 +118,9 @@ Todo se calcula dentro del rango.
 ```
 `last_paralysis_at` y `top_emotion` son `null` si no hay datos. 👍/👎 cuentan tareas cuyo `feedback_at` cae en el rango.
 
-### `GET /patients/{id}/paralysis?range=week`
+### `GET /patients/{id}/paralysis[?range=week]`
 Más reciente primero. Lista de objetos como el de `PATCH /me/paralysis/{id}`.
+`range` es **opcional**: sin `range` devuelve el historial completo (registro de la web); con `range` filtra como los demás.
 
 ### `GET /notifications`
 Reportes **no vistos** de todos tus pacientes, más reciente primero.

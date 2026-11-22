@@ -111,16 +111,15 @@ def kpis(patient_id: int, range_: RangeParam = "week",
 
 
 @router.get("/patients/{patient_id}/paralysis", response_model=list[ParalysisOut])
-def patient_paralysis(patient_id: int, range_: RangeParam = "week",
+def patient_paralysis(patient_id: int,
+                      range_: Annotated[Range | None, Query(alias="range")] = None,
                       therapist: User = Depends(require_therapist),
                       session: Session = Depends(get_session)):
     own_patient(session, therapist, patient_id)
-    return session.exec(
-        select(ParalysisReport)
-        .where(ParalysisReport.patient_id == patient_id,
-               ParalysisReport.pressed_at >= range_start(range_))
-        .order_by(ParalysisReport.pressed_at.desc())
-    ).all()
+    query = select(ParalysisReport).where(ParalysisReport.patient_id == patient_id)
+    if range_ is not None:  # no range = full history (the web's paralysis log)
+        query = query.where(ParalysisReport.pressed_at >= range_start(range_))
+    return session.exec(query.order_by(ParalysisReport.pressed_at.desc())).all()
 
 
 # --- Notifications ---
