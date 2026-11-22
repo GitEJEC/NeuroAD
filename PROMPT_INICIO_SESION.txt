@@ -1,0 +1,32 @@
+=== PRIMERA SESIÓN (Fase 1) ===
+Copia PLAN.md en la raíz de C:\dev\NeuroAD, abre Claude Code en esa carpeta y pega:
+
+Lee PLAN.md completo. Es el plan maestro de NeuroAD, un prototipo en 8 fases.
+En esta sesión ejecuta SOLO la Fase 1, siguiendo el "Protocolo de cada sesión" (sección 1).
+Recuerda: es un prototipo, evita la sobreingeniería y elige siempre la opción más simple.
+Antes de escribir código, dime en 3-5 líneas qué vas a crear. Luego hazlo sin esperar confirmación.
+Al terminar verifica los criterios de "Hecho", actualiza la tabla de estado y docs/PROGRESS.md, haz commit, push y el tag fase-1.
+
+
+=== SESIONES SIGUIENTES (Fase 2 a 8) ===
+Abre una sesión nueva de Claude Code en C:\dev\NeuroAD y pega (cambia N):
+
+Lee PLAN.md, CLAUDE.md y docs/PROGRESS.md. Revisa git log.
+En esta sesión ejecuta SOLO la Fase N del PLAN.md, siguiendo el "Protocolo de cada sesión".
+No adelantes trabajo de otras fases. Si algo del plan es ambiguo, elige lo más simple y anótalo en Decisiones.
+Antes de escribir código, dime en 3-5 líneas qué vas a hacer. Luego hazlo sin esperar confirmación.
+Al terminar verifica los criterios de "Hecho" (ejecuta lo que se pueda), marca la fase como ✅,
+actualiza docs/PROGRESS.md, haz commit, push y el tag fase-N.
+
+
+=== SI UNA FASE QUEDA A MEDIAS ===
+Lee PLAN.md y docs/PROGRESS.md. La Fase N quedó incompleta.
+Revisa git log y el código, dime qué falta según los criterios de "Hecho" de la Fase N y termínala.
+
+
+=== CÓMO PROBAR EN EL TELÉFONO (Fases 6-8) ===
+- Backend:  uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+- Tu IP LAN: ipconfig  (busca "Dirección IPv4", ej. 192.168.1.20)
+- mobile\.env:  EXPO_PUBLIC_API_URL=http://192.168.1.20:8000
+- npx expo start  y escanea el QR con Expo Go (teléfono y PC en la misma red wifi).
+- Si Windows bloquea la conexión, permite Python en el Firewall para redes privadas.
