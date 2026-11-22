@@ -53,7 +53,13 @@ copy .env.example .env      # EXPO_PUBLIC_API_URL=http://<IP-LAN-del-PC>:8000
 npm install
 npx expo start              # escanea el QR con Expo Go
 ```
-El firewall de Windows debe permitir los puertos 8000 y 8081 en la red privada.
+El firewall de Windows debe permitir los puertos 8000 y 8081 en la red privada. Para eso, ejecuta una sola vez en una PowerShell **como administrador**:
+```powershell
+New-NetFirewallRule -DisplayName "NeuroAD (API 8000, Expo 8081)" -Direction Inbound -Protocol TCP -LocalPort 8000,8081 -Action Allow -Profile Private
+# Para quitarla: Remove-NetFirewallRule -DisplayName "NeuroAD (API 8000, Expo 8081)"
+```
+La red Wi-Fi debe estar en perfil **Privado**. Para comprobarlo: `Get-NetConnectionProfile`.
+Si antes usaste la Opción B, quita los túneles con `adb reverse --remove-all`.
 
 **Opción B: cable USB.** No depende del firewall. Requiere `adb` y la depuración USB activada.
 ```powershell

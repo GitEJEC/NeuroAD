@@ -171,8 +171,10 @@ Recorrido en un Motorola edge 60 fusion real (Expo Go por USB), manejado por Cla
 - Sin backend aparece "No hay conexión…" con Reintentar. Al reconectar, Reintentar abre el panel; Saltar lleva a Qué hacer y el reporte queda sin descripción.
 
 No verificado por Claude:
-- La vibración y el toast de la web en el navegador: los confirma el usuario.
-- La prueba por Wi-Fi con la IP LAN: el firewall de Windows bloquea los puertos 8000 y 8081. Se probó por USB con `adb reverse`.
+- La vibración y el toast de la web los confirmó después el usuario: el teléfono vibra, la notificación llega a la web y los dashboards se actualizan.
+- La prueba por Wi-Fi con la IP LAN: el firewall de Windows la bloquea. Se probó por USB con `adb reverse`.
+  Causa: la regla de `python.exe` solo permite el perfil Public, y el Wi-Fi está en Private, así que uvicorn (8000) queda bloqueado.
+  Node sí tiene permiso en Private. Solución (como administrador): ver README, Opción A.
 
 **Ajuste (pedido tras la prueba en el teléfono)**
 - El usuario confirmó la vibración al reportar.
@@ -183,9 +185,12 @@ No verificado por Claude:
   lleva a Qué hacer y muestra un aviso "Listo, tu terapeuta ya fue avisado." de 4 s. Salir cierra el panel sin crear nada.
   Verificado en el Motorola: abrir el panel y tocar Salir no crea reportes. Con texto y Enviar se crea el reporte
   con su descripción, se abre Qué hacer y se ve el aviso.
+- Tercer ajuste: el panel queda anclado arriba (`marginTop: 96`), no centrado. Así el teclado no tapa Enviar ni Salir;
+  verificado en el teléfono con el teclado abierto. Se quitó el `KeyboardAvoidingView`, que no servía dentro del modal.
+- El tag `fase-6` se movió al último commit de los ajustes, con autorización del usuario.
 
 **Pendientes**
-- Para usar Wi-Fi, permitir los puertos 8000 y 8081 en el firewall de Windows (red privada). Hace falta un administrador.
+- Para usar Wi-Fi, permitir los puertos 8000 y 8081 en el firewall de Windows (red privada). Hace falta un administrador; el comando está en el README.
 - Fase 7: Tareas y Emociones en la app.
 
 ## Decisiones
@@ -246,4 +251,4 @@ No verificado por Claude:
 
 ## Pendientes
 - Fases 7 y 8 según `PLAN.md`.
-- Firewall de Windows: permitir los puertos 8000 y 8081 para probar la app por Wi-Fi.
+- Firewall de Windows: permitir los puertos 8000 y 8081 para probar la app por Wi-Fi (comando en el README, Opción A).

@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { api, errorMessage, type IdOut } from '../../src/api/client';
 import { useSession } from '../../src/api/session';
@@ -73,8 +73,9 @@ export default function Home() {
       </Button>
 
       <Portal>
-        <Modal visible={open} dismissable={false} contentContainerStyle={styles.modal}>
-          <KeyboardAvoidingView behavior="padding" style={styles.modalBody}>
+        {/* Anchored to the top so the keyboard never covers Enviar / Salir. */}
+        <Modal visible={open} dismissable={false} style={styles.modalWrapper} contentContainerStyle={styles.modal}>
+          <View style={styles.modalBody}>
             <Text variant="titleMedium" accessibilityRole="header">
               Avisa a tu terapeuta
             </Text>
@@ -90,7 +91,7 @@ export default function Home() {
             {saveError && <ErrorMessage message={saveError} onRetry={send} />}
             <BigButton label="Enviar" icon="send" onPress={send} loading={saving} />
             <BigButton label="Salir" icon="close" mode="outlined" onPress={close} />
-          </KeyboardAvoidingView>
+          </View>
         </Modal>
         {/* Lives in the Portal so it stays visible after switching to Qué hacer. */}
         <Snackbar visible={sent} onDismiss={() => setSent(false)} duration={4000} wrapperStyle={styles.snackbar}>
@@ -105,7 +106,8 @@ const styles = StyleSheet.create({
   muted: { color: colors.muted },
   spacer: { flex: 1 },
   logout: { minHeight: 48 },
-  modal: { margin: spacing.md, padding: spacing.lg, borderRadius: 16, backgroundColor: colors.surface },
+  modalWrapper: { justifyContent: 'flex-start' },
+  modal: { margin: spacing.md, marginTop: 96, padding: spacing.lg, borderRadius: 16, backgroundColor: colors.surface },
   modalBody: { gap: spacing.md },
   snackbar: { bottom: 72 },
 });
