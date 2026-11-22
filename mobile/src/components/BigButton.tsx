@@ -12,16 +12,17 @@ type Props = {
   tall?: boolean;
   // For toggle buttons (task feedback): announced to screen readers.
   selected?: boolean;
+  disabled?: boolean;
 };
 
-export function BigButton({ label, onPress, icon, loading, mode = 'contained', tall, selected }: Props) {
+export function BigButton({ label, onPress, icon, loading, mode = 'contained', tall, selected, disabled }: Props) {
   return (
     <Button
       mode={mode}
       icon={icon}
       onPress={onPress}
       loading={loading}
-      disabled={loading}
+      disabled={loading || disabled}
       accessibilityLabel={label}
       accessibilityState={selected === undefined ? undefined : { selected }}
       style={styles.button}

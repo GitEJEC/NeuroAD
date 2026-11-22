@@ -238,6 +238,19 @@ No verificado por Claude:
 - El spinner de pull-to-refresh no salió en la captura.
 - En la BD quedaron registros de prueba de hoy (calma, ansiedad, frustración y alegría, y "Hacer la cama" con 👍). `python seed.py` los borra.
 
+**Ajuste (pedido tras la prueba en el teléfono)**
+- El usuario confirmó que las emociones se registran y aparecen en la web.
+- Para evitar falsos positivos, un toque en la grilla ya no registra la emoción: solo la **selecciona**. La celda elegida
+  muestra un borde índigo, un ✓ y `accessibilityState.selected`; si se toca otra vez, se quita la selección.
+  El botón **Enviar** hace el `POST`, vibra, muestra "Guardado: X · Deshacer" y limpia la selección.
+- Enviar queda fijo abajo, fuera del scroll, y está deshabilitado mientras no haya selección. La snackbar aparece justo encima de él.
+  Se agregó el texto guía "Elige una emoción y toca Enviar." y la prop `disabled` en `BigButton`.
+- `PLAN.md` (§7 y Fase 7) actualizado.
+- Verificado en el Motorola: elegir Calma no cambia el conteo del día y volver a tocarla la desmarca.
+  Alegría + Enviar sube el conteo de 2 a 3, limpia la selección y deshabilita Enviar. Al enviar otra y tocar Deshacer, baja de 4 a 3.
+  `tsc` sin errores.
+- El tag `fase-7` se movió al commit del ajuste, con autorización del usuario.
+
 **Pendientes**
 - Fase 8: integración, revisión de UX y cierre.
 
@@ -304,6 +317,10 @@ No verificado por Claude:
 - (Fase 7) El feedback no es optimista: la tarjeta se actualiza con la respuesta del `PUT`. Si falla, aparece `ErrorMessage` dentro de la tarjeta y Reintentar repite el toque.
 - (Fase 7) Vibración: `vibrate()` intenta expo-haptics y, si no está, usa `Vibration.vibrate(40)` de React Native. No se agregó ninguna librería. Se usa `notificationAsync(Success)` en todos los casos: el plan pide solo una "vibración corta".
 - (Fase 7) Las celdas de la grilla de emociones tienen 96 dp de alto mínimo y un emoji de 36. Así entran las 10 emociones y "Último registro" sin desplazar en el Motorola.
+
+- (Ajuste Fase 7, pedido del usuario) Una emoción se registra solo al tocar Enviar; el toque en la grilla solo selecciona. Se mantiene Deshacer (5 s) por si se envía la equivocada.
+- (Ajuste Fase 7) Enviar va fijo abajo, fuera del `ScrollView`: con 10 celdas no cabía en pantalla y quedaba tapado por las pestañas.
+- (Ajuste Fase 7) El borde de la celda mide siempre 3 px y es transparente cuando no está elegida. Así, elegir una emoción no mueve la grilla.
 
 ## Pendientes
 - Fase 8 según `PLAN.md`.

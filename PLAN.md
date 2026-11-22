@@ -235,7 +235,7 @@ Reglas:
 
 **Reportes de parálisis (web):** pestaña propia en el detalle del paciente. Es el **registro completo** de todas sus parálisis (sin límite de fechas), más reciente primero, con fecha/hora local, descripción o "Sin descripción", y badge "Nuevo" en las que estaban sin ver.
 
-**Emociones (app):** grilla de botones grandes (emoji + nombre). Un toque registra la emoción con fecha/hora y muestra un snackbar "Guardado: Calma · Deshacer" durante 5 s.
+**Emociones (app):** grilla de botones grandes (emoji + nombre). Un toque solo **selecciona** la emoción (borde y ✓; tocarla otra vez la quita). El botón **Enviar**, fijo abajo, la registra con fecha/hora, limpia la selección y muestra un snackbar "Guardado: Calma · Deshacer" durante 5 s.
 
 **Dashboard (web):** gráfico con interruptor **Barras / Torta**, filtro **Día / Semana / Mes**, y **leyenda lateral** con color + nombre de cada emoción y su conteo. KPIs en tarjetas arriba del gráfico.
 
@@ -313,7 +313,7 @@ Reglas:
 ### Fase 7 — App móvil: Tareas y Bitácora de emociones
 **Objetivo:** completar las otras dos pestañas.
 - **Tareas:** `TaskCard` en acordeón (una abierta a la vez). Al abrir: `MicroStepList` numerada con checkbox local por paso. Al final de la tarea, dos botones grandes **"Me sirvió 👍"** y **"No me sirvió 👎"** con estado seleccionado visible; volver a tocar quita la selección. Pull-to-refresh.
-- **Emociones:** pregunta "¿Cómo te sientes ahora?" + `EmotionGrid` 2 columnas con emoji grande y nombre. Toque → registra + vibración + snackbar con **Deshacer** (5 s). Debajo, texto pequeño "Último registro: Calma, 14:32".
+- **Emociones:** pregunta "¿Cómo te sientes ahora?" + `EmotionGrid` 2 columnas con emoji grande y nombre. Toque → selecciona; botón **Enviar** (fijo abajo, deshabilitado sin selección) → registra + vibración + snackbar con **Deshacer** (5 s). Debajo, texto pequeño "Último registro: Calma, 14:32".
 - Estados vacíos y errores según la guía.
 
 **Hecho cuando:** el feedback de una tarea aparece en la web; una emoción registrada desde el teléfono se refleja en el gráfico de la web (filtro Día); Deshacer la elimina; tag `fase-7`.
