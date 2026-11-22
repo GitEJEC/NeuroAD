@@ -165,7 +165,7 @@ Auth: `Authorization: Bearer <jwt>`. FastAPI expone Swagger en `/docs`.
 - `GET /patients/{id}`
 - `GET /patients/{id}/emotions/summary?range=day|week|month` → `[{emotion_key, count}]`
 - `GET /patients/{id}/kpis?range=day|week|month`
-- `GET /patients/{id}/paralysis?range=...` → lista de reportes
+- `GET /patients/{id}/paralysis?range=...` → lista de reportes (`range` opcional: sin `range` = historial completo)
 - `GET /notifications` → reportes de parálisis **no vistos** de todos sus pacientes
 - `PATCH /paralysis/{id}/seen`
 - `GET/POST /patients/{id}/tasks`, `PUT/DELETE /patients/{id}/tasks/{task_id}` (el body incluye `title` y `steps: [str]`)
@@ -231,7 +231,9 @@ Reglas:
 3. Enviar → `PATCH` con la descripción. En ambos casos, la app navega automáticamente a la pestaña **Qué hacer**.
 4. Si no hay conexión: mostrar error amable con Reintentar (sin colas offline).
 
-**Notificación en la web:** la web consulta `GET /notifications` cada 15 s. Si llega un reporte nuevo, muestra un toast con paciente, fecha/hora y descripción, y una campana con contador en el encabezado. Al abrir el paciente o hacer clic en el reporte se marca como visto.
+**Notificación en la web:** la web consulta `GET /notifications` cada 15 s. Si llega un reporte nuevo, muestra un toast con paciente, fecha/hora y descripción, y una campana con contador en el encabezado. Clic en una notificación de la campana → abre al paciente en la pestaña **Reportes de parálisis** con ese reporte **destacado** y visible. Al abrir esa pestaña, los reportes sin ver del paciente se marcan como vistos (la campana baja de inmediato).
+
+**Reportes de parálisis (web):** pestaña propia en el detalle del paciente. Es el **registro completo** de todas sus parálisis (sin límite de fechas), más reciente primero, con fecha/hora local, descripción o "Sin descripción", y badge "Nuevo" en las que estaban sin ver.
 
 **Emociones (app):** grilla de botones grandes (emoji + nombre). Un toque registra la emoción con fecha/hora y muestra un snackbar "Guardado: Calma · Deshacer" durante 5 s.
 
@@ -269,19 +271,19 @@ Reglas:
 - Vite + React + TS en `/web`, Mantine (core + notifications), react-router, fuente Lexend.
 - `api/client.ts`: base URL desde `VITE_API_URL`, token en `localStorage`, si responde 401 → cerrar sesión.
 - Pantalla Login (email, contraseña, error claro).
-- Layout con encabezado: nombre del terapeuta, **campana de notificaciones** (polling 15 s, contador, toast en nuevo reporte, clic → ir al paciente) y botón Salir.
+- Layout con encabezado: nombre del terapeuta, **campana de notificaciones** (polling 15 s, contador, toast en nuevo reporte, clic → pestaña Reportes de parálisis del paciente con ese reporte destacado) y botón Salir.
 - Página Pacientes: tarjetas o tabla con nombre, última parálisis y badge de no vistas. Clic → detalle.
-- Página Detalle de paciente con pestañas vacías: **Resumen · Tareas · Consejos**.
+- Página Detalle de paciente con pestañas: **Resumen · Reportes de parálisis · Tareas · Consejos**. Resumen, Tareas y Consejos quedan vacías; **Reportes de parálisis** muestra el registro completo (`ParalysisFeed`, ver sección 7).
+- Web cómoda de leer: texto base 18 px, tarjetas amplias, fondo suave, Lexend.
 
-**Hecho cuando:** con backend + seed corriendo, se inicia sesión, se ve la lista, se entra a un paciente y la campana muestra los reportes no vistos; tag `fase-3`.
+**Hecho cuando:** con backend + seed corriendo, se inicia sesión, se ve la lista, se entra a un paciente, la campana muestra los reportes no vistos y al hacer clic en uno se abre el registro con ese reporte destacado; tag `fase-3`.
 
 ### Fase 4 — Web: dashboard de emociones y KPIs
 **Objetivo:** pestaña Resumen completa.
-- Control segmentado **Día / Semana / Mes** (por defecto Semana) que afecta gráfico, KPIs y lista.
+- Control segmentado **Día / Semana / Mes** (por defecto Semana) que afecta gráfico y KPIs. (El registro de parálisis vive en su propia pestaña desde la Fase 3 y no usa este filtro.)
 - `KpiCards`: parálisis en el rango, última parálisis, emociones registradas, emoción más frecuente, tareas 👍/👎.
 - `EmotionChart` con Recharts e interruptor **Barras / Torta**. Colores desde `GET /emotions`.
 - `EmotionLegend` a un costado (debajo en pantallas angostas): color + emoji + nombre + conteo.
-- `ParalysisFeed`: lista de reportes del rango con fecha/hora local y descripción; los no vistos se destacan y se marcan como vistos al abrir la pestaña.
 - Estado vacío cuando no hay datos en el rango.
 
 **Hecho cuando:** cambiar filtro y tipo de gráfico actualiza todo sin recargar; los números coinciden con la BD; tag `fase-4`.

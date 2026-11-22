@@ -73,7 +73,24 @@ token inválido → 401; contraseña mala → 401 "Correo o contraseña incorrec
 No verificado en navegador (sin herramienta de navegador en la sesión): recorrido visual login → lista → detalle → campana. Hacerlo a mano.
 
 **Pendientes**
-- Fase 4: pestaña Resumen (gráfico, leyenda, KPIs, ParalysisFeed).
+- Fase 4: pestaña Resumen (gráfico, leyenda, KPIs).
+
+### 2026-11-22 — Ajuste Fase 3 (pedido tras la prueba en navegador)
+**Qué se hizo**
+- Pestaña nueva **Reportes de parálisis** en el detalle del paciente (Resumen · Reportes de parálisis · Tareas · Consejos):
+  el registro completo de las parálisis (`components/ParalysisFeed.tsx`). Muestra badge "Nuevo" en las no vistas y un contador en la pestaña.
+- Campana: al hacer clic en una notificación se abre `/patients/{id}?tab=paralysis&report={rid}`, con ese reporte destacado
+  (borde índigo y "Seleccionado") y desplazado a la vista.
+- Al abrir la pestaña, los no vistos del paciente se marcan como vistos y la campana se actualiza de inmediato (evento `neuroad:notifications`).
+- Backend: `GET /patients/{id}/paralysis` acepta `range` opcional; sin `range` devuelve todo el historial. Test nuevo (9 tests en total).
+- Web más grande y agradable: base 18 px, fondo gris suave, encabezado de 72 px, pacientes en tarjetas, login más amplio, pestañas grandes.
+- `PLAN.md` (§4, §7, Fases 3 y 4) actualizado con estas especificaciones.
+
+**Cómo probarlo**
+`pytest` → 9 passed. `python seed.py`, backend y `npm run dev`. En http://localhost:5173: campana (2) → clic en un reporte →
+Matías, pestaña Reportes de parálisis con 5 reportes y el elegido destacado; la campana baja a 0.
+Verificado: `npm run build` y `npm run lint` sin errores; `GET /patients/2/paralysis` sin `range` → 5 reportes (2 sin ver).
+No verificado en navegador por Claude: lo prueba el usuario.
 
 ## Decisiones
 - `seed.py` hashea con `bcrypt` directamente. En Fase 2, `security.py` usará el mismo bcrypt, así que los hashes son compatibles.
@@ -94,7 +111,11 @@ No verificado en navegador (sin herramienta de navegador en la sesión): recorri
 - (Fase 2) `GET /patients` hace una consulta por paciente: basta para pocos pacientes.
 - (Fase 3) Librerías nuevas: las que pide el plan (`@mantine/core`, `@mantine/hooks`, `@mantine/notifications`, `react-router-dom`) más lo que trae la plantilla Vite (`oxlint` como linter). Recharts se instala en Fase 4.
 - (Fase 3) Sin `postcss-preset-mantine`: no escribimos CSS con mixins de Mantine. Fechas con `Intl.DateTimeFormat` (sin dayjs).
-- (Fase 3) Clic en una notificación marca ese reporte como visto. Abrir el paciente todavía no marca nada: eso lo hará la pestaña Resumen (ParalysisFeed) en Fase 4.
+- ~~(Fase 3) Clic en una notificación marca ese reporte como visto.~~ Reemplazado en el ajuste de Fase 3: los reportes se marcan como vistos al abrir la pestaña Reportes de parálisis.
+- (Ajuste Fase 3, pedido del usuario) El registro de parálisis vive en su propia pestaña y muestra todo el historial; el filtro Día/Semana/Mes de la Fase 4 no lo afecta.
+- (Ajuste Fase 3) `range` opcional solo en `GET /patients/{id}/paralysis`; resumen y KPIs siguen exigiendo rango (por defecto `week`).
+- (Ajuste Fase 3) El reporte elegido va en la URL (`?tab=paralysis&report=`), así se puede recargar o compartir sin estado extra.
+- (Ajuste Fase 3) Tamaño: `html { font-size: 112.5% }` (18 px), así todo Mantine escala sin tocar cada componente.
 - (Fase 3) La primera consulta de la campana solo fija la base (sin toast); los toasts salen para reportes que aparecen después.
 - (Fase 3) 401 con sesión activa → `window.location.assign('/login')`, sin bus de eventos.
 - (Fase 3) Un paciente que intenta entrar a la web ve "Esta web es solo para terapeutas." (no se guarda su token).
