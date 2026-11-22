@@ -185,7 +185,7 @@ No verificado por Claude:
   lleva a Qué hacer y muestra un aviso "Listo, tu terapeuta ya fue avisado." de 4 s. Salir cierra el panel sin crear nada.
   Verificado en el Motorola: abrir el panel y tocar Salir no crea reportes. Con texto y Enviar se crea el reporte
   con su descripción, se abre Qué hacer y se ve el aviso.
-- Tercer ajuste: el panel queda anclado arriba (`marginTop: 96`), no centrado. Así el teclado no tapa Enviar ni Salir;
+- Tercer ajuste: el panel queda anclado arriba (`marginTop: 192`, punto medio entre el centrado original y un primer intento con 96 que quedó demasiado alto), no centrado. Así el teclado no tapa Enviar ni Salir;
   verificado en el teléfono con el teclado abierto. Se quitó el `KeyboardAvoidingView`, que no servía dentro del modal.
 - El tag `fase-6` se movió al último commit de los ajustes, con autorización del usuario.
 

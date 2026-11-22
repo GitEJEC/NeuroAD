@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   spacer: { flex: 1 },
   logout: { minHeight: 48 },
   modalWrapper: { justifyContent: 'flex-start' },
-  modal: { margin: spacing.md, marginTop: 96, padding: spacing.lg, borderRadius: 16, backgroundColor: colors.surface },
+  modal: { margin: spacing.md, marginTop: 192, padding: spacing.lg, borderRadius: 16, backgroundColor: colors.surface },
   modalBody: { gap: spacing.md },
   snackbar: { bottom: 72 },
 });
