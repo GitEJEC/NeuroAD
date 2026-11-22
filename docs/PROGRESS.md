@@ -174,6 +174,11 @@ No verificado por Claude:
 - La vibración y el toast de la web en el navegador: los confirma el usuario.
 - La prueba por Wi-Fi con la IP LAN: el firewall de Windows bloquea los puertos 8000 y 8081. Se probó por USB con `adb reverse`.
 
+**Ajuste (pedido tras la prueba en el teléfono)**
+- El usuario confirmó la vibración al reportar.
+- En el panel de parálisis, "Saltar" pasa a ser **Salir**: cierra el panel y la app se queda en Inicio. Enviar, con texto o sin él, sigue llevando a Qué hacer.
+  `PLAN.md` §7 y `docs/UX_BAJA_FRICCION.md` actualizados.
+
 **Pendientes**
 - Para usar Wi-Fi, permitir los puertos 8000 y 8081 en el firewall de Windows (red privada). Hace falta un administrador.
 - Fase 7: Tareas y Emociones en la app.
@@ -224,7 +229,9 @@ No verificado por Claude:
 - (Fase 6) La sesión usa `Stack.Protected` de expo-router, sin redirecciones manuales. El token y el usuario se guardan en secure-store y la app entra directo sin llamar a `/auth/me`; un 401 posterior cierra la sesión. Así funciona sin conexión al abrir.
 - (Fase 6) Un terapeuta que entra a la app ve "Correo o contraseña incorrectos", igual que en la web.
 - (Fase 6) `api()` corta a los 10 s: con una IP LAN inalcanzable el botón no queda girando.
-- (Fase 6) En el panel de parálisis, Enviar con el texto vacío equivale a Saltar. El panel no se cierra tocando fuera, para no perder el paso.
+- ~~(Fase 6) En el panel de parálisis, Enviar con el texto vacío equivale a Saltar.~~ Reemplazado en el ajuste de Fase 6.
+- (Ajuste Fase 6, pedido del usuario) El botón "Saltar" pasa a ser "Salir": cierra el panel y se queda en Inicio, sin abrir Qué hacer. Para reportar sin texto se usa Enviar, que no hace `PATCH` y lleva a Qué hacer. El reporte ya existe desde el toque, así que Salir no lo borra.
+- (Fase 6) El panel no se cierra tocando fuera, para no perder el paso.
 - (Fase 6) Tareas y Emociones muestran solo un estado vacío hasta la Fase 7.
 - (Fase 6) Sin ESLint en mobile; el chequeo es `tsc --noEmit` en modo estricto.
 - (Fase 6) Prueba en el teléfono por USB con `adb reverse` (8000 y 8081) y `EXPO_PUBLIC_API_URL=http://localhost:8000`, porque el firewall de Windows bloquea la LAN. El `.env.example` mantiene la IP LAN del plan.

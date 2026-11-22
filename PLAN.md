@@ -227,8 +227,9 @@ Reglas:
 
 **Reportar parálisis (app):**
 1. El paciente toca el botón → se envía `POST /me/paralysis` de inmediato (queda registrada la fecha/hora del toque aunque no escriba nada) → vibración.
-2. Se abre un panel con un cuadro de texto opcional "¿Qué pasó? (opcional)" y dos botones: **Enviar** y **Saltar**.
-3. Enviar → `PATCH` con la descripción. En ambos casos, la app navega automáticamente a la pestaña **Qué hacer**.
+2. Se abre un panel con un cuadro de texto opcional "¿Qué pasó? (opcional)" y dos botones: **Enviar** y **Salir**.
+3. Enviar → `PATCH` con la descripción (si el texto está vacío no hay `PATCH`) y la app navega automáticamente a la pestaña **Qué hacer**.
+   Salir → cierra el panel y se queda en Inicio, sin abrir Qué hacer (el reporte ya quedó registrado en el paso 1).
 4. Si no hay conexión: mostrar error amable con Reintentar (sin colas offline).
 
 **Notificación en la web:** la web consulta `GET /notifications` cada 15 s. Si llega un reporte nuevo, muestra un toast con paciente, fecha/hora y descripción, y una campana con contador en el encabezado. Clic en una notificación de la campana → abre al paciente en la pestaña **Reportes de parálisis** con ese reporte **destacado** y visible. Al abrir esa pestaña, los reportes sin ver del paciente se marcan como vistos (la campana baja de inmediato).

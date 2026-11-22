@@ -40,7 +40,7 @@ Los tamaños son `sp`: respetan el tamaño de letra del sistema.
 ## Textos tipo
 - Login: "Entra con el correo y la contraseña que te dio tu terapeuta."
 - Inicio: "Hola, {nombre}" · "Si te sientes bloqueado, toca el botón. Tu terapeuta recibirá un aviso."
-- Tras el toque: "Listo, tu terapeuta ya fue avisado." · campo "¿Qué pasó? (opcional)" · botones **Enviar** y **Saltar**.
+- Tras el toque: "Listo, tu terapeuta ya fue avisado." · campo "¿Qué pasó? (opcional)" · botones **Enviar** (con o sin texto, lleva a Qué hacer) y **Salir** (cierra el panel y vuelve a Inicio).
 - Qué hacer: "Prueba una de estas ideas. Elige la que te parezca más fácil."
 - Error: "No hay conexión. Lo intentaremos de nuevo." + botón **Reintentar**.
 - Vacíos: "Aún no tienes consejos. Tu terapeuta los agregará pronto." (en la Fase 7, Tareas usará "Aún no tienes tareas. Tu terapeuta las agregará pronto." cuando la lista esté vacía).

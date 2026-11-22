@@ -37,10 +37,15 @@ export default function Home() {
     }
   }
 
-  function finish() {
+  // The report is already saved; closing only hides the panel and stays on Inicio.
+  function close() {
     setReportId(null);
     setDescription('');
     setSaveError(null);
+  }
+
+  function finish() {
+    close();
     router.navigate('/que-hacer');
   }
 
@@ -96,7 +101,7 @@ export default function Home() {
             />
             {saveError && <ErrorMessage message={saveError} onRetry={sendDescription} />}
             <BigButton label="Enviar" icon="send" onPress={sendDescription} loading={saving} />
-            <BigButton label="Saltar" mode="outlined" onPress={finish} />
+            <BigButton label="Salir" icon="close" mode="outlined" onPress={close} />
           </KeyboardAvoidingView>
         </Modal>
       </Portal>
