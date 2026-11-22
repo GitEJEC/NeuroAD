@@ -5,7 +5,7 @@ import { Screen } from '../../src/components/Screen';
 export default function Tasks() {
   return (
     <Screen>
-      <EmptyState icon="format-list-checks" message="Aún no tienes tareas. Tu terapeuta las agregará pronto." />
+      <EmptyState icon="format-list-checks" message="Pronto verás aquí las tareas que te dejó tu terapeuta." />
     </Screen>
   );
 }
