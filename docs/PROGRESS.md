@@ -57,7 +57,7 @@ Verificado: `pytest` 8 passed. Con uvicorn real: `/openapi.json` lista las 22 ru
 - Páginas: `Login`, `Patients` (tabla: nombre, última parálisis, badge "N sin ver"), `PatientDetail` (pestañas vacías Resumen · Tareas · Consejos).
 - `components/AppLayout` (encabezado: NeuroAD, nombre del terapeuta, campana, Salir) y `components/NotificationBell`
   (polling 15 s a `/notifications`, contador, toast con paciente/fecha/descripción en reportes nuevos, clic → marca visto y abre el paciente).
-- `PLAN.md`: IP LAN del PC de desarrollo (`192.168.100.1`) para las pruebas con el teléfono.
+- `PLAN.md`: IP LAN del PC de desarrollo (`192.168.100.10`) para las pruebas con el teléfono.
 
 **Cómo probarlo**
 ```powershell
