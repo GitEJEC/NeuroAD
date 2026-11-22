@@ -114,6 +114,30 @@ No verificado en navegador por Claude: el recorrido visual (cambiar filtro y Bar
 **Pendientes**
 - Fase 5: tareas, micropasos y consejos en la web.
 
+### 2026-11-22 — Fase 5: Tareas, micropasos y consejos (web)
+**Qué se hizo**
+- Pestaña **Tareas** (`components/TasksTab.tsx`): tarjetas con título, nº de micropasos y feedback del paciente
+  (👍 Le sirvió / 👎 No le sirvió / Sin respuesta, con fecha). Botones "Nueva tarea", Editar y Eliminar.
+- `TaskEditor` (modal): título + micropasos numerados; agregar, editar, eliminar, subir/bajar con botones (sin drag & drop).
+  Guardar → `POST` o `PUT` con la lista completa. Validación: título obligatorio y al menos 1 micropaso (los vacíos se descartan).
+- Pestaña **Consejos** (`components/TipsTab.tsx` + `TipEditor`): lista en el orden que ve el paciente; crear, editar,
+  eliminar y subir/bajar. Validación: título y texto obligatorios.
+- `ConfirmDelete`: modal de confirmación para borrar tareas y consejos. Tipos `Task` y `Tip` en `api/client.ts`.
+- Sin cambios en el backend.
+
+**Cómo probarlo**
+```powershell
+# backend/: python seed.py; uvicorn app.main:app --reload
+# web/: npm install; npm run dev  → http://localhost:5173 → Matías → Tareas / Consejos
+```
+Verificado: `npm run build` y `npm run lint` sin errores (solo el aviso de Vite por bundle > 500 kB); `pytest` 9 passed.
+Recorrido en Chromium (Playwright) con backend + Vite reales: validaciones visibles; tarea nueva con 4 pasos A-B-C-D,
+reordenada a B-A-D-C y guardada; tras recargar, editada (título y pasos) y eliminada con confirmación; la API confirma cada cambio.
+Consejo nuevo, subido un lugar, recargado (orden persiste), editado y eliminado.
+
+**Pendientes**
+- Fase 6: app móvil (base, diseño, parálisis, Qué hacer).
+
 ## Decisiones
 - `seed.py` hashea con `bcrypt` directamente. En Fase 2, `security.py` usará el mismo bcrypt, así que los hashes son compatibles.
 - `seed.py` recrea la BD con `drop_all` + `create_all` en vez de borrar el archivo. Así no hay que interpretar `DB_URL`, y se evita un archivo bloqueado en Windows si uvicorn está corriendo.
@@ -147,7 +171,12 @@ No verificado en navegador por Claude: el recorrido visual (cambiar filtro y Bar
 - (Fase 4) Gráficos sin animación (guía §6, regla 10).
 - (Fase 4) El filtro y el tipo de gráfico viven en estado local, no en la URL. Al cambiar de filtro, los datos anteriores siguen en pantalla hasta que llegan los nuevos.
 - (Fase 4) Las KPIs se muestran aunque no haya emociones en el rango (en 0); el estado vacío solo reemplaza el gráfico.
+- (Fase 5) "Se reordena" en el criterio de Hecho = reordenar micropasos; el plan no pide reordenar tareas, así que no se hace.
+- (Fase 5) Subir/bajar un consejo intercambia `position` con su vecino usando dos `PUT` existentes; sin endpoint nuevo.
+- (Fase 5) Confirmación de borrado con un `Modal` propio, sin agregar `@mantine/modals`.
+- (Fase 5) Tras guardar o borrar se recarga la lista desde el backend (sin estado optimista).
+- (Fase 5) Micropasos vacíos se descartan al guardar; si no queda ninguno, se pide al menos uno.
 - (Fase 3) Se borró `web/README.md` de una línea para que `create-vite` creara el proyecto; quedó uno nuevo que remite al README raíz.
 
 ## Pendientes
-- Fases 5 a 8 según `PLAN.md`.
+- Fases 6 a 8 según `PLAN.md`.
