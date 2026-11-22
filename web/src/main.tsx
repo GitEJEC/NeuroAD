@@ -1,10 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { MantineProvider, createTheme } from '@mantine/core';
+import { Button, MantineProvider, PasswordInput, TextInput, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import './styles.css';
 import { AuthProvider, RequireAuth } from './auth/AuthContext';
 import AppLayout from './components/AppLayout';
 import Login from './pages/Login';
@@ -15,6 +16,13 @@ const theme = createTheme({
   fontFamily: 'Lexend, sans-serif',
   headings: { fontFamily: 'Lexend, sans-serif' },
   primaryColor: 'indigo',
+  defaultRadius: 'md',
+  lineHeights: { md: '1.6' },
+  components: {
+    Button: Button.extend({ defaultProps: { size: 'md' } }),
+    TextInput: TextInput.extend({ defaultProps: { size: 'md' } }),
+    PasswordInput: PasswordInput.extend({ defaultProps: { size: 'md' } }),
+  },
 });
 
 createRoot(document.getElementById('root')!).render(

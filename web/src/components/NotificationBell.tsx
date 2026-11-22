@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ActionIcon, Indicator, Menu, Text } from '@mantine/core';
 import { notifications as toasts } from '@mantine/notifications';
-import { api, formatDateTime, type Notification } from '../api/client';
+import { NOTIFICATIONS_CHANGED, api, formatDateTime, type Notification } from '../api/client';
 
 const POLL_MS = 15_000;
 
@@ -33,48 +33,42 @@ export default function NotificationBell() {
     }
     poll();
     const timer = setInterval(poll, POLL_MS);
-    return () => clearInterval(timer);
+    window.addEventListener(NOTIFICATIONS_CHANGED, poll);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener(NOTIFICATIONS_CHANGED, poll);
+    };
   }, []);
 
-  async function open(n: Notification) {
-    try {
-      await api(`/paralysis/${n.id}/seen`, { method: 'PATCH' });
-      setItems((prev) => prev.filter((x) => x.id !== n.id));
-    } catch {
-      // Marking as seen is best effort; still take the therapist to the patient.
-    }
-    navigate(`/patients/${n.patient_id}`);
-  }
-
   return (
-    <Menu position="bottom-end" width={340} shadow="md">
+    <Menu position="bottom-end" width={400} shadow="md">
       <Menu.Target>
-        <Indicator label={items.length} size={18} disabled={items.length === 0} color="red">
-          <ActionIcon variant="subtle" size="lg" aria-label={`Notificaciones: ${items.length} sin ver`}>
-            <span aria-hidden="true" style={{ fontSize: 20 }}>🔔</span>
+        <Indicator label={items.length} size={20} disabled={items.length === 0} color="red">
+          <ActionIcon variant="subtle" size="xl" aria-label={`Notificaciones: ${items.length} sin ver`}>
+            <span aria-hidden="true" style={{ fontSize: 24 }}>🔔</span>
           </ActionIcon>
         </Indicator>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Label>Parálisis sin ver</Menu.Label>
+        <Menu.Label fz="sm">Parálisis sin ver</Menu.Label>
         {items.length === 0 && (
-          <Text size="sm" c="dimmed" p="sm">
+          <Text c="dimmed" p="sm">
             No hay reportes nuevos.
           </Text>
         )}
         {items.map((n) => (
-          <Menu.Item key={n.id} onClick={() => open(n)}>
-            <Text size="sm" fw={500}>
-              {n.patient_name}
-            </Text>
-            <Text size="xs" c="dimmed">
+          <Menu.Item
+            key={n.id}
+            py="sm"
+            onClick={() => navigate(`/patients/${n.patient_id}?tab=paralysis&report=${n.id}`)}
+          >
+            <Text fw={600}>{n.patient_name}</Text>
+            <Text size="sm" c="dimmed">
               {formatDateTime(n.pressed_at)}
             </Text>
-            {n.description && (
-              <Text size="xs" lineClamp={2}>
-                {n.description}
-              </Text>
-            )}
+            <Text size="sm" lineClamp={2}>
+              {n.description ?? 'Sin descripción'}
+            </Text>
           </Menu.Item>
         ))}
       </Menu.Dropdown>

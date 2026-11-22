@@ -25,6 +25,17 @@ export type Notification = {
   description: string | null;
 };
 
+export type Paralysis = {
+  id: number;
+  patient_id: number;
+  pressed_at: string;
+  description: string | null;
+  seen_by_therapist: boolean;
+};
+
+// Fired after marking reports as seen, so the bell refreshes without waiting for the next poll.
+export const NOTIFICATIONS_CHANGED = 'neuroad:notifications';
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {

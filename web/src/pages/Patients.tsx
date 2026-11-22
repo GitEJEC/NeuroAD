@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Alert, Badge, Button, Container, Loader, Table, Text, Title } from '@mantine/core';
+import { Link } from 'react-router-dom';
+import { Alert, Badge, Button, Container, Group, Loader, Paper, SimpleGrid, Text, Title } from '@mantine/core';
 import { api, formatDateTime, type PatientItem } from '../api/client';
 
 export default function Patients() {
-  const navigate = useNavigate();
   const [patients, setPatients] = useState<PatientItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,8 +19,8 @@ export default function Patients() {
   useEffect(load, []);
 
   return (
-    <Container size="md">
-      <Title order={2} mb="md">
+    <Container size="lg">
+      <Title order={1} fz={32} mb="lg">
         Tus pacientes
       </Title>
       {error && (
@@ -35,31 +34,37 @@ export default function Patients() {
       {!patients && !error && <Loader />}
       {patients?.length === 0 && <Text>Aún no tienes pacientes asignados.</Text>}
       {patients && patients.length > 0 && (
-        <Table highlightOnHover verticalSpacing="sm">
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Nombre</Table.Th>
-              <Table.Th>Última parálisis</Table.Th>
-              <Table.Th>Sin ver</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {patients.map((p) => (
-              <Table.Tr key={p.id} onClick={() => navigate(`/patients/${p.id}`)} style={{ cursor: 'pointer' }}>
-                <Table.Td>
-                  <Text fw={500}>{p.full_name}</Text>
-                  <Text size="sm" c="dimmed">
-                    {p.email}
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+          {patients.map((p) => (
+            <Paper
+              key={p.id}
+              component={Link}
+              to={`/patients/${p.id}`}
+              withBorder
+              shadow="xs"
+              radius="lg"
+              p="xl"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <Group justify="space-between" align="flex-start" wrap="nowrap">
+                <div>
+                  <Text fw={600} fz={22}>
+                    {p.full_name}
                   </Text>
-                </Table.Td>
-                <Table.Td>{p.last_paralysis_at ? formatDateTime(p.last_paralysis_at) : 'Sin reportes'}</Table.Td>
-                <Table.Td>
-                  {p.unseen_count > 0 ? <Badge color="red">{p.unseen_count} sin ver</Badge> : <Text c="dimmed">—</Text>}
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+                  <Text c="dimmed">{p.email}</Text>
+                </div>
+                {p.unseen_count > 0 && (
+                  <Badge color="orange" size="lg">
+                    {p.unseen_count} sin ver
+                  </Badge>
+                )}
+              </Group>
+              <Text mt="md">
+                Última parálisis: {p.last_paralysis_at ? formatDateTime(p.last_paralysis_at) : 'sin reportes'}
+              </Text>
+            </Paper>
+          ))}
+        </SimpleGrid>
       )}
     </Container>
   );

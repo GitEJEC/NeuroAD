@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Alert, Button, Center, Paper, PasswordInput, Stack, TextInput, Title } from '@mantine/core';
+import { Alert, Button, Center, Paper, PasswordInput, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useAuth } from '../auth/AuthContext';
 
 export default function Login() {
@@ -29,10 +29,15 @@ export default function Login() {
 
   return (
     <Center h="100vh" p="md">
-      <Paper withBorder shadow="sm" p="xl" radius="md" w="100%" maw={400}>
+      <Paper withBorder shadow="sm" p={40} radius="lg" w="100%" maw={480}>
         <form onSubmit={handleSubmit}>
-          <Stack>
-            <Title order={2}>NeuroAD</Title>
+          <Stack gap="lg">
+            <div>
+              <Title order={1} fz={34} c="indigo.8">
+                NeuroAD
+              </Title>
+              <Text c="dimmed">Entra con tu cuenta de terapeuta.</Text>
+            </div>
             <TextInput
               label="Correo"
               type="email"

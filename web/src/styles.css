@@ -1,0 +1,15 @@
+/* Mantine sizes are in rem: a bigger root font scales the whole UI (18 px base, PLAN §6). */
+html {
+  font-size: 112.5%;
+}
+
+body {
+  background: var(--mantine-color-gray-0);
+}
+
+/* Report picked from the bell: smooth scroll only if the user allows motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
