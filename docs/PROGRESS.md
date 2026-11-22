@@ -92,6 +92,28 @@ Matías, pestaña Reportes de parálisis con 5 reportes y el elegido destacado; 
 Verificado: `npm run build` y `npm run lint` sin errores; `GET /patients/2/paralysis` sin `range` → 5 reportes (2 sin ver).
 No verificado en navegador por Claude: lo prueba el usuario.
 
+### 2026-11-22 — Fase 4: Dashboard de emociones y KPIs
+**Qué se hizo**
+- Pestaña **Resumen** completa (`components/SummaryTab.tsx`): control **Día / Semana / Mes** (por defecto Semana) que afecta KPIs y gráfico.
+- `KpiCards`: parálisis en el rango, última parálisis, emociones registradas, emoción más frecuente, tareas 👍 / 👎.
+- `EmotionChart` (Recharts) con interruptor **Barras / Torta**; colores desde `GET /emotions`.
+- `EmotionLegend` al costado (debajo en pantallas angostas): color + emoji + nombre + conteo.
+- Estado vacío "No hay emociones registradas en este rango." Tipos `Emotion`, `EmotionCount`, `Kpis`, `Range` en `api/client.ts`.
+- Sin cambios en el backend.
+
+**Cómo probarlo**
+```powershell
+# backend/: python seed.py; uvicorn app.main:app --reload
+# web/: npm install; npm run dev  → http://localhost:5173 → Matías → Resumen
+```
+Verificado: `npm run build` y `npm run lint` sin errores (solo el aviso de Vite por bundle > 500 kB). `pytest` 9 passed.
+Script que compara `/patients/2/kpis` y `/emotions/summary` con consultas SQL directas a `neuroad.db`: coinciden en
+day (1 emoción, 1 parálisis), week (10 emociones, 2 parálisis) y month (40 emociones, 5 parálisis).
+No verificado en navegador por Claude: el recorrido visual (cambiar filtro y Barras/Torta) lo prueba el usuario.
+
+**Pendientes**
+- Fase 5: tareas, micropasos y consejos en la web.
+
 ## Decisiones
 - `seed.py` hashea con `bcrypt` directamente. En Fase 2, `security.py` usará el mismo bcrypt, así que los hashes son compatibles.
 - `seed.py` recrea la BD con `drop_all` + `create_all` en vez de borrar el archivo. Así no hay que interpretar `DB_URL`, y se evita un archivo bloqueado en Windows si uvicorn está corriendo.
@@ -120,7 +142,12 @@ No verificado en navegador por Claude: lo prueba el usuario.
 - (Fase 3) 401 con sesión activa → `window.location.assign('/login')`, sin bus de eventos.
 - (Fase 3) Un paciente que intenta entrar a la web ve el mismo "Correo o contraseña incorrectos" que una contraseña mala (no se guarda su token). Antes decía "Esta web es solo para terapeutas.", pero eso confirmaba que la contraseña era correcta.
 - (Fase 3) La campana usa el emoji 🔔 (con `aria-label`) en vez de agregar una librería de íconos.
+- (Fase 4) Librería nueva `recharts` (la pide el plan). El bundle pasa de 500 kB; no se divide el código porque es un prototipo local.
+- (Fase 4) La leyenda muestra las 10 emociones (las que tienen 0 van atenuadas), así no cambia de forma entre rangos. El gráfico muestra solo las que tienen registros.
+- (Fase 4) Gráficos sin animación (guía §6, regla 10).
+- (Fase 4) El filtro y el tipo de gráfico viven en estado local, no en la URL. Al cambiar de filtro, los datos anteriores siguen en pantalla hasta que llegan los nuevos.
+- (Fase 4) Las KPIs se muestran aunque no haya emociones en el rango (en 0); el estado vacío solo reemplaza el gráfico.
 - (Fase 3) Se borró `web/README.md` de una línea para que `create-vite` creara el proyecto; quedó uno nuevo que remite al README raíz.
 
 ## Pendientes
-- Fases 3 a 8 según `PLAN.md`.
+- Fases 5 a 8 según `PLAN.md`.
