@@ -188,6 +188,12 @@ No verificado por Claude:
 - Tercer ajuste: el panel queda anclado arriba (`marginTop: 192`, punto medio entre el centrado original y un primer intento con 96 que quedó demasiado alto), no centrado. Así el teclado no tapa Enviar ni Salir;
   verificado en el teléfono con el teclado abierto. Se quitó el `KeyboardAvoidingView`, que no servía dentro del modal.
 - El tag `fase-6` se movió al último commit de los ajustes, con autorización del usuario.
+- **Prueba por Wi-Fi OK** (sin `adb reverse`, `EXPO_PUBLIC_API_URL=http://192.168.100.10:8000`): la app carga desde Metro por la LAN
+  y Qué hacer trae los consejos del backend. Hicieron falta dos cosas:
+  1. La regla del firewall del README, que el usuario creó como administrador.
+  2. En Android 17, el permiso `ACCESS_LOCAL_NETWORK` para Expo Go, que estaba denegado. Sin él, Expo Go falla con
+     "Failed to download remote update" aunque Chrome del teléfono sí abra `:8000/health` y `:8081/status`.
+     Se concedió con `adb shell pm grant`. Quedó documentado en el README.
 
 **Pendientes**
 - Para usar Wi-Fi, permitir los puertos 8000 y 8081 en el firewall de Windows (red privada). Hace falta un administrador; el comando está en el README.

@@ -61,6 +61,10 @@ New-NetFirewallRule -DisplayName "NeuroAD (API 8000, Expo 8081)" -Direction Inbo
 La red Wi-Fi debe estar en perfil **Privado**. Para comprobarlo: `Get-NetConnectionProfile`.
 Si antes usaste la Opción B, quita los túneles con `adb reverse --remove-all`.
 
+**Android 17 o superior:** Expo Go necesita el permiso **Red local** para llegar al PC. Sin él falla con "Something went wrong / Failed to download remote update", aunque Chrome sí abra la IP.
+Actívalo en Ajustes → Apps → Expo Go → Permisos → Red local → Permitir. Con el cable también sirve `adb shell pm grant host.exp.exponent android.permission.ACCESS_LOCAL_NETWORK`.
+La primera carga tras `--clear` puede tardar; si falla, toca recargar en Expo Go.
+
 **Opción B: cable USB.** No depende del firewall. Requiere `adb` y la depuración USB activada.
 ```powershell
 adb reverse tcp:8000 tcp:8000
