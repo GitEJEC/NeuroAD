@@ -56,6 +56,26 @@ export type Kpis = {
 
 export type Range = 'day' | 'week' | 'month';
 
+export type Task = {
+  id: number;
+  patient_id: number;
+  title: string;
+  position: number;
+  feedback: 'like' | 'dislike' | null;
+  feedback_at: string | null;
+  created_at: string;
+  updated_at: string;
+  steps: string[];
+};
+
+export type Tip = {
+  id: number;
+  patient_id: number;
+  title: string;
+  body: string;
+  position: number;
+};
+
 // Fired after marking reports as seen, so the bell refreshes without waiting for the next poll.
 export const NOTIFICATIONS_CHANGED = 'neuroad:notifications';
 

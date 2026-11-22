@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { Alert, Anchor, Badge, Container, Loader, Paper, Tabs, Text, Title } from '@mantine/core';
+import { Alert, Anchor, Badge, Container, Loader, Paper, Tabs, Title } from '@mantine/core';
 import { NOTIFICATIONS_CHANGED, api, type Paralysis, type User } from '../api/client';
 import ParalysisFeed from '../components/ParalysisFeed';
 import SummaryTab from '../components/SummaryTab';
+import TasksTab from '../components/TasksTab';
+import TipsTab from '../components/TipsTab';
 
 // Remount (and refetch) when the patient or the report picked in the bell changes,
 // so a report that arrived after the page loaded is in the list.
@@ -94,7 +96,6 @@ function PatientView({ id }: { id: string }) {
                   Consejos
                 </Tabs.Tab>
               </Tabs.List>
-              {/* Tasks and tips arrive in phase 5. */}
               <Tabs.Panel value="summary">
                 <SummaryTab patientId={id} />
               </Tabs.Panel>
@@ -102,10 +103,10 @@ function PatientView({ id }: { id: string }) {
                 <ParalysisFeed reports={reports} highlightId={highlightId} />
               </Tabs.Panel>
               <Tabs.Panel value="tasks">
-                <Text c="dimmed">Aquí podrás crear y editar tareas.</Text>
+                <TasksTab patientId={id} />
               </Tabs.Panel>
               <Tabs.Panel value="tips">
-                <Text c="dimmed">Aquí podrás editar los consejos.</Text>
+                <TipsTab patientId={id} />
               </Tabs.Panel>
             </Tabs>
           </Paper>
