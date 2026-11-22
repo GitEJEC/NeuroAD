@@ -118,7 +118,7 @@ No verificado en navegador por Claude: lo prueba el usuario.
 - (Ajuste Fase 3) Tamaño: `html { font-size: 112.5% }` (18 px), así todo Mantine escala sin tocar cada componente.
 - (Fase 3) La primera consulta de la campana solo fija la base (sin toast); los toasts salen para reportes que aparecen después.
 - (Fase 3) 401 con sesión activa → `window.location.assign('/login')`, sin bus de eventos.
-- (Fase 3) Un paciente que intenta entrar a la web ve "Esta web es solo para terapeutas." (no se guarda su token).
+- (Fase 3) Un paciente que intenta entrar a la web ve el mismo "Correo o contraseña incorrectos" que una contraseña mala (no se guarda su token). Antes decía "Esta web es solo para terapeutas.", pero eso confirmaba que la contraseña era correcta.
 - (Fase 3) La campana usa el emoji 🔔 (con `aria-label`) en vez de agregar una librería de íconos.
 - (Fase 3) Se borró `web/README.md` de una línea para que `create-vite` creara el proyecto; quedó uno nuevo que remite al README raíz.
 

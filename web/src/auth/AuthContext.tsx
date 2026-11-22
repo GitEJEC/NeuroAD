@@ -29,7 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    if (res.user.role !== 'therapist') throw new Error('Esta web es solo para terapeutas.');
+    // Same message as a wrong password: don't reveal that a patient's credentials are valid.
+    if (res.user.role !== 'therapist') throw new Error('Correo o contraseña incorrectos');
     setToken(res.access_token);
     setUser(res.user);
   }
