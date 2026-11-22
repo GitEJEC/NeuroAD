@@ -39,7 +39,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 - `python seed.py` borra y recrea `neuroad.db` con los datos demo. Úsalo para dejar la demo como nueva.
 - `--host 0.0.0.0` deja que el teléfono llegue al backend por la red. Si solo usas la web, basta `uvicorn app.main:app --reload`.
 - Tests: `pytest`.
-- Si PowerShell no deja ejecutar `Activate.ps1`, corre una vez `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 
 ## 2. Web (terapeuta)
 Con el backend corriendo, desde la carpeta `web/`:
@@ -105,6 +104,12 @@ Antes de empezar: `python seed.py` y las tres partes corriendo.
    **App:** abre la pestaña **Tareas** y luego **Qué hacer**: los cambios ya se ven (las pestañas se recargan al abrirse; en Tareas también puedes deslizar hacia abajo).
 
 ## Problemas comunes
+- **"No se puede cargar el archivo ... Activate.ps1 / npx.ps1 porque la ejecución de scripts está deshabilitada"**: PowerShell bloquea los scripts por defecto. Ejecuta una sola vez (no necesita administrador):
+  ```powershell
+  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+  ```
+  Si prefieres no cambiarlo, usa `.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000` (sin activar el venv) y `npx.cmd` / `npm.cmd` en vez de `npx` / `npm`.
+- **"address already in use" o Expo pregunta por otro puerto**: ya hay un backend o un Expo abierto. Ciérralo (Ctrl+C en su ventana) antes de iniciar otro.
 - **La app dice "No hay conexión. Lo intentaremos de nuevo."**: revisa que el backend corra con `--host 0.0.0.0`, que `EXPO_PUBLIC_API_URL` tenga la IP correcta y que el firewall permita el puerto 8000 (Opción A). Desde el navegador del teléfono, `http://<IP-LAN>:8000/health` debe responder.
 - **Android 17 o superior:** Expo Go necesita el permiso **Red local** para llegar al PC. Sin él falla con "Something went wrong / Failed to download remote update", aunque Chrome sí abra la IP.
   Actívalo en Ajustes → Apps → Expo Go → Permisos → Red local → Permitir. Con el cable también sirve `adb shell pm grant host.exp.exponent android.permission.ACCESS_LOCAL_NETWORK`.
