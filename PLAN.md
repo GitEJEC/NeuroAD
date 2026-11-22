@@ -337,7 +337,7 @@ Reglas:
 | Fase | Descripción | Estado |
 |---|---|---|
 | 1 | Fundaciones + esqueleto backend | ✅ |
-| 2 | API completa + tests | ⬜ |
+| 2 | API completa + tests | ✅ |
 | 3 | Web: base, login, pacientes | ⬜ |
 | 4 | Web: dashboard emociones + KPIs | ⬜ |
 | 5 | Web: tareas, micropasos, consejos | ⬜ |
