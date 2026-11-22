@@ -178,6 +178,11 @@ No verificado por Claude:
 - El usuario confirmó la vibración al reportar.
 - En el panel de parálisis, "Saltar" pasa a ser **Salir**: cierra el panel y la app se queda en Inicio. Enviar, con texto o sin él, sigue llevando a Qué hacer.
   `PLAN.md` §7 y `docs/UX_BAJA_FRICCION.md` actualizados.
+- Segundo ajuste: el reporte ya no se crea al tocar el botón grande, sino solo al tocar **Enviar**.
+  El botón grande vibra y abre el panel "Avisa a tu terapeuta". Enviar hace `POST` y, si hay texto, `PATCH`; luego vibra,
+  lleva a Qué hacer y muestra un aviso "Listo, tu terapeuta ya fue avisado." de 4 s. Salir cierra el panel sin crear nada.
+  Verificado en el Motorola: abrir el panel y tocar Salir no crea reportes. Con texto y Enviar se crea el reporte
+  con su descripción, se abre Qué hacer y se ve el aviso.
 
 **Pendientes**
 - Para usar Wi-Fi, permitir los puertos 8000 y 8081 en el firewall de Windows (red privada). Hace falta un administrador.
@@ -230,7 +235,10 @@ No verificado por Claude:
 - (Fase 6) Un terapeuta que entra a la app ve "Correo o contraseña incorrectos", igual que en la web.
 - (Fase 6) `api()` corta a los 10 s: con una IP LAN inalcanzable el botón no queda girando.
 - ~~(Fase 6) En el panel de parálisis, Enviar con el texto vacío equivale a Saltar.~~ Reemplazado en el ajuste de Fase 6.
-- (Ajuste Fase 6, pedido del usuario) El botón "Saltar" pasa a ser "Salir": cierra el panel y se queda en Inicio, sin abrir Qué hacer. Para reportar sin texto se usa Enviar, que no hace `PATCH` y lleva a Qué hacer. El reporte ya existe desde el toque, así que Salir no lo borra.
+- (Ajuste Fase 6, pedido del usuario) El botón "Saltar" pasa a ser "Salir": cierra el panel y se queda en Inicio, sin abrir Qué hacer. Para reportar sin texto se usa Enviar, que no hace `PATCH` y lleva a Qué hacer. (Desde el segundo ajuste, Salir no crea ningún reporte.)
+- (Ajuste Fase 6, pedido del usuario) El reporte se crea solo al tocar Enviar, no al tocar el botón grande. Así, `pressed_at` es la hora del envío. Salir ya no deja ningún reporte.
+- (Ajuste Fase 6) Enviar usa los endpoints existentes, `POST` y luego `PATCH` si hay texto, sin cambiar el backend. Si el `PATCH` falla, Reintentar reusa el id ya creado y no duplica el reporte.
+- (Ajuste Fase 6) El aviso "Listo, tu terapeuta ya fue avisado." es un `Snackbar` dentro del `Portal` de Paper, para que se vea sobre Qué hacer después de navegar.
 - (Fase 6) El panel no se cierra tocando fuera, para no perder el paso.
 - (Fase 6) Tareas y Emociones muestran solo un estado vacío hasta la Fase 7.
 - (Fase 6) Sin ESLint en mobile; el chequeo es `tsc --noEmit` en modo estricto.

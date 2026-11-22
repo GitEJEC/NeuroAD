@@ -39,8 +39,9 @@ Los tamaños son `sp`: respetan el tamaño de letra del sistema.
 
 ## Textos tipo
 - Login: "Entra con el correo y la contraseña que te dio tu terapeuta."
-- Inicio: "Hola, {nombre}" · "Si te sientes bloqueado, toca el botón. Tu terapeuta recibirá un aviso."
-- Tras el toque: "Listo, tu terapeuta ya fue avisado." · campo "¿Qué pasó? (opcional)" · botones **Enviar** (con o sin texto, lleva a Qué hacer) y **Salir** (cierra el panel y vuelve a Inicio).
+- Inicio: "Hola, {nombre}" · "Si te sientes bloqueado, toca el botón. Luego toca Enviar para avisar a tu terapeuta."
+- Tras el toque: panel "Avisa a tu terapeuta" · campo "¿Qué pasó? (opcional)" · botones **Enviar** (con o sin texto; crea el reporte y lleva a Qué hacer) y **Salir** (cierra el panel sin enviar y vuelve a Inicio).
+- Tras Enviar: aviso abajo, sobre Qué hacer, "Listo, tu terapeuta ya fue avisado." (4 s).
 - Qué hacer: "Prueba una de estas ideas. Elige la que te parezca más fácil."
 - Error: "No hay conexión. Lo intentaremos de nuevo." + botón **Reintentar**.
 - Vacíos: "Aún no tienes consejos. Tu terapeuta los agregará pronto." (en la Fase 7, Tareas usará "Aún no tienes tareas. Tu terapeuta las agregará pronto." cuando la lista esté vacía).
@@ -51,7 +52,7 @@ Los tamaños son `sp`: respetan el tamaño de letra del sistema.
 3. **Texto:** 18 sp, interlineado 1,5, alineado a la izquierda, sin cursivas, en segunda persona.
 4. **Áreas táctiles ≥ 48 dp;** el botón de parálisis mide ≥ 120 dp y ocupa todo el ancho.
 5. **Color calmo con contraste AA:** índigo profundo, sin rojo de alarma, y siempre con texto o ícono.
-6. **Respuesta inmediata:** al tocar hay vibración y aparece el mensaje "Listo, tu terapeuta ya fue avisado."
+6. **Respuesta inmediata:** al tocar el botón grande hay una vibración corta y se abre el panel. Al enviar hay otra vibración y aparece el mensaje "Listo, tu terapeuta ya fue avisado."
 7. **Sin pasos obligatorios:** la descripción es opcional y nunca se pide confirmar dos veces.
 8. **Errores amables:** `ErrorMessage` muestra un mensaje y el botón Reintentar. No hay cola offline.
 9. **Estados vacíos con guía:** `EmptyState` en Tareas, Emociones y Qué hacer.

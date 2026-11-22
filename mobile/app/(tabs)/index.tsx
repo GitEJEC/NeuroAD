@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
-import { Button, Modal, Portal, Text, TextInput } from 'react-native-paper';
+import { Button, Modal, Portal, Snackbar, Text, TextInput } from 'react-native-paper';
 import { api, errorMessage, type IdOut } from '../../src/api/client';
 import { useSession } from '../../src/api/session';
 import { BigButton } from '../../src/components/BigButton';
@@ -12,54 +12,43 @@ import { colors, spacing } from '../../src/theme';
 
 export default function Home() {
   const { user, logout } = useSession();
-  const [sending, setSending] = useState(false);
-  const [reportError, setReportError] = useState<string | null>(null);
-  // Set once the press is saved: opens the optional description panel.
-  const [reportId, setReportId] = useState<number | null>(null);
+  const [open, setOpen] = useState(false);
   const [description, setDescription] = useState('');
+  // Set once the POST succeeds, so retrying after a failed PATCH does not create a second report.
+  const [reportId, setReportId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
   const firstName = user?.full_name.split(' ')[0] ?? '';
 
-  async function report() {
-    setSending(true);
-    setReportError(null);
-    try {
-      // Sent right away: the time of the press is recorded even if nothing is written.
-      const { id } = await api<IdOut>('/me/paralysis', { method: 'POST' });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setReportId(id);
-    } catch (e) {
-      setReportError(errorMessage(e));
-    } finally {
-      setSending(false);
-    }
+  function openPanel() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setOpen(true);
   }
 
-  // The report is already saved; closing only hides the panel and stays on Inicio.
   function close() {
-    setReportId(null);
+    setOpen(false);
     setDescription('');
+    setReportId(null);
     setSaveError(null);
   }
 
-  function finish() {
-    close();
-    router.navigate('/que-hacer');
-  }
-
-  async function sendDescription() {
-    if (!description.trim()) return finish();
+  // The report is created only here: nothing reaches the therapist until the patient taps Enviar.
+  async function send() {
     setSaving(true);
     setSaveError(null);
     try {
-      await api(`/me/paralysis/${reportId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ description: description.trim() }),
-      });
+      const id = reportId ?? (await api<IdOut>('/me/paralysis', { method: 'POST' })).id;
+      setReportId(id);
+      const text = description.trim();
+      if (text) {
+        await api(`/me/paralysis/${id}`, { method: 'PATCH', body: JSON.stringify({ description: text }) });
+      }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      finish();
+      close();
+      setSent(true);
+      router.navigate('/que-hacer');
     } catch (e) {
       setSaveError(errorMessage(e));
     } finally {
@@ -73,11 +62,10 @@ export default function Home() {
         Hola, {firstName}
       </Text>
       <Text variant="bodyLarge" style={styles.muted}>
-        Si te sientes bloqueado, toca el botón. Tu terapeuta recibirá un aviso.
+        Si te sientes bloqueado, toca el botón. Luego toca Enviar para avisar a tu terapeuta.
       </Text>
 
-      <BigButton label="Reportar parálisis" icon="hand-back-left" tall onPress={report} loading={sending} />
-      {reportError && <ErrorMessage message={reportError} onRetry={report} />}
+      <BigButton label="Reportar parálisis" icon="hand-back-left" tall onPress={openPanel} />
 
       <View style={styles.spacer} />
       <Button mode="text" icon="logout" onPress={logout} textColor={colors.muted} contentStyle={styles.logout}>
@@ -85,10 +73,10 @@ export default function Home() {
       </Button>
 
       <Portal>
-        <Modal visible={reportId !== null} dismissable={false} contentContainerStyle={styles.modal}>
+        <Modal visible={open} dismissable={false} contentContainerStyle={styles.modal}>
           <KeyboardAvoidingView behavior="padding" style={styles.modalBody}>
-            <Text variant="titleMedium" accessibilityLiveRegion="polite" style={styles.done}>
-              Listo, tu terapeuta ya fue avisado.
+            <Text variant="titleMedium" accessibilityRole="header">
+              Avisa a tu terapeuta
             </Text>
             <TextInput
               mode="outlined"
@@ -99,11 +87,15 @@ export default function Home() {
               multiline
               numberOfLines={4}
             />
-            {saveError && <ErrorMessage message={saveError} onRetry={sendDescription} />}
-            <BigButton label="Enviar" icon="send" onPress={sendDescription} loading={saving} />
+            {saveError && <ErrorMessage message={saveError} onRetry={send} />}
+            <BigButton label="Enviar" icon="send" onPress={send} loading={saving} />
             <BigButton label="Salir" icon="close" mode="outlined" onPress={close} />
           </KeyboardAvoidingView>
         </Modal>
+        {/* Lives in the Portal so it stays visible after switching to Qué hacer. */}
+        <Snackbar visible={sent} onDismiss={() => setSent(false)} duration={4000} wrapperStyle={styles.snackbar}>
+          Listo, tu terapeuta ya fue avisado.
+        </Snackbar>
       </Portal>
     </Screen>
   );
@@ -115,5 +107,5 @@ const styles = StyleSheet.create({
   logout: { minHeight: 48 },
   modal: { margin: spacing.md, padding: spacing.lg, borderRadius: 16, backgroundColor: colors.surface },
   modalBody: { gap: spacing.md },
-  done: { color: colors.success },
+  snackbar: { bottom: 72 },
 });
